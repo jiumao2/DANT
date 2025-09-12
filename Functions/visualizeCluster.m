@@ -11,10 +11,7 @@ function visualizeCluster(Output, cluster_id, spikeInfo, waveforms, user_setting
 %   Output                struct  
 %       IdxCluster         integer (n_units × 1)       cluster label for each unit
 %       Sessions           integer (n_units × 1)       session index for each unit
-%       Motion             struct with fields:
-%           LinearScale    double scalar               global motion scaling factor
-%           Linear         double (n_sessions × 1)     per‐session linear coefficients
-%           Constant       double (n_sessions × 1)     per‐session offset terms
+%       Motion             struct with fields "LinearScale", "Linear" and "Constant"
 %       Locations          double (n_units × 2)        [x,y] coordinates of each unit peak
 %       SimilarityPairs    integer (P × 2)             unit index pairs for similarity data
 %       SimilarityAll      double (P × M)              similarity values for each pair and feature

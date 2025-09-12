@@ -1,14 +1,14 @@
 Tutorials
 ================
 
-This tutorial provides a step-by-step guide on how to use the Kilomatch package for tracking neurons across sessions. It is designed to help you prepare your data and run the code effectively. You should install Kilomatch correctly before proceeding with this tutorial. If you haven't installed Kilomatch yet, please refer to the :doc:`Installation <Installation>` section.
+This tutorial provides a step-by-step guide on how to use the DANT package for tracking neurons across sessions. It is designed to help you prepare your data and run the code effectively. You should install DANT correctly before proceeding with this tutorial. If you haven't installed DANT yet, please refer to the :doc:`Installation <Installation>` section.
 
 .. _prepare_the_data_label:
 
 Prepare the data
 -----------------------
 
-To use Kilomatch, you need to prepare your data in a specific format. The data should be an 1 x n struct array named ``spikeInfo`` with the following fields:
+To use DANT, you need to prepare your data in a specific format. The data should be an 1 x n struct array named ``spikeInfo`` with the following fields:
 
 =================  =============================            ==================
 Field name         Type                                     Explanation  
@@ -64,27 +64,27 @@ An example of the data structure is shown below:
             Kcoords: [283x1 double]
                 PETH: [19.7457 19.7650 19.7651 19.7651 19.7649 19.7553 19.7637 19.7540 19.7618 19.7783 19.7778 19.7771 19.7762 … ]
 
-Note that it have ``RatName``, ``Session``, and ``Unit`` fields, which are not used in Kilomatch but useful to identify the units.
+Note that it have ``RatName``, ``Session``, and ``Unit`` fields, which are not used in DANT but useful to identify the units.
 
-- Copy the ``settings.json`` and ``mainKilomatch.m`` (for single shank) or ``mainKilomatchMultiShank.m`` (for multi shanks) files from the Kilomatch package to your data folder. It can be like:
+- Copy the ``settings.json`` and ``mainDANT.m`` (for single shank) or ``mainDANT_MultiShank.m`` (for multi shanks) files from the DANT package to your data folder. It can be like:
 
 .. code-block::
 
     your_data_folder/
-    ├── mainKilomatch.m or mainKilomatchMultiShank.m
+    ├── mainDANT.m or mainDANT_MultiShank.m
     ├── settings.json
     └── spikeInfo.mat
 
 Edit the settings
 -----------------------
 
-To make Kilomatch work, you need to edit the ``settings.json`` file in your data folder. At least, you need to specify the following fields:
+To make DANT work, you need to edit the ``settings.json`` file in your data folder. At least, you need to specify the following fields:
 
 .. code-block:: json
 
     {
         "path_to_data": ".\\spikeInfo.mat", // path to spikeInfo.mat
-        "output_folder": ".\\kilomatchOutput", // output folder
+        "output_folder": ".\\DANT_Output", // output folder
         "path_to_python": "path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe", // path to python (3.9+) which has hdbscan installed
     }
 
@@ -112,12 +112,12 @@ and
         "n_iter": 10 // number of iterations for the clustering algorithm
     },
 
-Also, the ``mainKilomatch.m`` or ``mainKilomatchMultiShank.m`` file should be edited to specify the path to the Kilomatch package:
+Also, the ``mainDANT.m`` or ``mainDANT_MultiShank.m`` file should be edited to specify the path to the DANT package:
 
 .. code-block:: matlab
 
-    % Set the path to Kilomatch and settings
-    path_kilomatch = '.\Kilomatch'; % The path where Kilomatch is installed
+    % Set the path to DANT and settings
+    path_dant = '.\DANT'; % The path where DANT is installed
     path_settings = '.\settings.json'; % Please make sure the settings in the file are accurate
 
 To learn more about the settings, please refer to the :doc:`Change default settings <Change_default_settings>` section. The optimized settings can help you get better tracking results!
@@ -125,15 +125,15 @@ To learn more about the settings, please refer to the :doc:`Change default setti
 Run the code
 -----------------------
 
-Run ``mainKilomatch.m`` or ``mainKilomatchMultiShank.m``. Hopefully, you will get the tracking results in the output folder specified in the ``settings.json`` file. It can be like:
+Run ``mainDANT.m`` or ``mainDANT_MultiShank.m``. Hopefully, you will get the tracking results in the output folder specified in the ``settings.json`` file. It can be like:
 
 .. code-block::
 
     your_data_folder/
-    ├── mainKilomatch.m or mainKilomatchMultiShank.m
+    ├── mainDANT.m or mainDANT_MultiShank.m
     ├── settings.json
     ├── spikeInfo.mat
-    └── kilomatchOutput/
+    └── DANT_Output/
         ├── spikeInfo.mat
         ├── Output.mat
         ├── Waveforms.mat
@@ -161,16 +161,16 @@ After running the code, you can visualize the results in the ``Figures/Overview.
 
     overviewResults(user_settings, Output);
 
-The figure shows the overview of the Kilomatch results, including the unit number / depth across sessions, the estimated probe motion, the similarity score distribution for different features and their weights, the matched probability between sessions, and presence of unique neurons across sessions, and the similarity matrix. The quality of tracking can be easily assessed by reading the figure.
+The figure shows the overview of the DANT results, including the unit number / depth across sessions, the estimated probe motion, the similarity score distribution for different features and their weights, the matched probability between sessions, and presence of unique neurons across sessions, and the similarity matrix. The quality of tracking can be easily assessed by reading the figure.
 
 Then, you may want to look into certain clusters. You can run the following code to visualize a cluster:
 
 .. code-block:: matlab
 
-    load kilomatchOutput/Output.mat; % load the output file
-    load kilomatchOutput/spikeInfo.mat; % load the spikeInfo file
-    load kilomatchOutput/Waveforms.mat; % load the waveforms file
-    
+    load DANT_Output/Output.mat; % load the output file
+    load DANT_Output/spikeInfo.mat; % load the spikeInfo file
+    load DANT_Output/Waveforms.mat; % load the waveforms file
+
     cluster_id = 1; % specify the cluster ID you want to visualize
 
     visualizeCluster(Output, cluster_id, spikeInfo, waveforms_corrected, Output.Params)
@@ -187,7 +187,7 @@ This will generate a figure like the one above, showing the corrected depth, cor
 Understand the output
 -----------------------
 
-With some intermediate files, the main output file is located in ``kilomatchOutput/Output.mat``, which contains the following fields:
+With some intermediate files, the main output file is located in ``DANT_Output/Output.mat``, which contains the following fields:
 
 ===========================     =============================               =================
 Field name                      Type                                        Explanation  
@@ -211,7 +211,7 @@ Field name                      Type                                        Expl
 ``SimilarityAll``               n_pairs x n_features double                 similarity between each pair of units
 ``SimilarityPairs``             n_pairs x 2 int                             unit index for each pair of units
 ``SimilarityWeights``           1 x n_features double                       weights of the similarity metrics computed from IHDBSCAN algorithm
-``SimilarityThreshold``         1 x 1 double                                hreshold used to determine the good matches in `GoodMatchesMatrix`
+``SimilarityThreshold``         1 x 1 double                                threshold used to determine the good matches in `GoodMatchesMatrix`
 ``GoodMatchesMatrix``           n_unit x n_unit logical                     good matches determined by `SimilarityThreshold`
 ``SimilarityMatrix``            n_unit x n_unit double                      weighted sum of the similarity between each pair of units
 ``Motion``                      1 x n_session double                        probe positions in each session

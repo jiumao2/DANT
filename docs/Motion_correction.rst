@@ -183,7 +183,7 @@ The rigid correction is not enough sometimes. Some datasets exhibit strong depth
 
 |
 
-First, let's look at the matched pairs found by Kilomatch with rigid motion correction. The displacements of these matched pairs are perfectly linearly correlated with the depth of these units (left side panel)! The difference of displacements is greater than 100 μm comparing the top region with the bottom region. It means that the brain shrinked significantly during this period (right side schematic).
+First, let's look at the matched pairs found by DANT with rigid motion correction. The displacements of these matched pairs are perfectly linearly correlated with the depth of these units (left side panel)! The difference of displacements is greater than 100 μm comparing the top region with the bottom region. It means that the brain shrinked significantly during this period (right side schematic).
 
 Taken this linearity into consieration, we develop a new algorithm for non-rigid correction. Following the definition in :ref:`rigid motion estimation <motion_estimation_label>`, let's additionally define the depth :math:`d^i` for the :math:`i`-th matched pair via
 

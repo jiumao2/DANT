@@ -1,6 +1,6 @@
 function [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all,...
     weights, thres, good_matches_matrix, leafOrder] = ...
-    iterativeClustering(user_settings, path_kilomatch, similarity_matrix_all, feature_names, idx_unit_pairs, sessions)
+    iterativeClustering(user_settings, path_DANT, similarity_matrix_all, feature_names, idx_unit_pairs, sessions)
 % ITERATIVECLUSTERING  Iterative HDBSCAN clustering with adaptive feature weighting.
 %
 % Performs iterative HDBSCAN clustering on unit similarity data.
@@ -15,8 +15,8 @@ function [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all
 %       .output_folder             Directory to save settings and outputs.
 %       .path_to_python            Path to the Python executable.
 %
-%   path_kilomatch            char
-%       Path to the kilomatch repo containing main_hdbscan.py.
+%   path_DANT            char
+%       Path to the DANT repo containing main_hdbscan.py.
 %
 %   similarity_matrix_all     double (n_unit × n_unit × n_features)
 %       Pairwise similarity values for each feature.
@@ -102,7 +102,7 @@ for iter = 1:user_settings.clustering.n_iter
     
     % run HDBSCAN with Python
     system([fullfile(user_settings.path_to_python), ' ',...
-        fullfile(path_kilomatch, 'Functions/main_hdbscan.py'), ' ',...
+        fullfile(path_DANT, 'Functions/main_hdbscan.py'), ' ',...
         fullfile(user_settings.output_folder, 'HDBSCAN_settings.json')]);
     
     idx_cluster_hdbscan = double(readNPY(fullfile(user_settings.output_folder, 'ClusterIndices.npy')));

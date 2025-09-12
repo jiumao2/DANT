@@ -1,19 +1,19 @@
-# Kilomatch
+# DANT: Density-based Across-day Neuron Tracking
 
-[![View Kilomatch on GitHub](https://img.shields.io/badge/GitHub-Kilomatch-blue.svg)](https://github.com/jiumao2/Kilomatch)
-[![Documentation Status](https://app.readthedocs.org/projects/kilomatch/badge/)](https://kilomatch.readthedocs.io/en/latest/)
+[![View DANT on GitHub](https://img.shields.io/badge/GitHub-DANT-blue.svg)](https://github.com/jiumao2/DANT)
+[![Documentation Status](https://app.readthedocs.org/projects/dant/badge/)](https://dant.readthedocs.io/en/latest/)
 
 A MATLAB toolbox for tracking the neurons across days.
 
-Check out the Python version of Kilomatch [here](https://github.com/jiumao2/pyKilomatch)!  
+Check out the Python version of DANT [here](https://github.com/jiumao2/pyDANT)!  
 
-Read the [documentation](https://kilomatch.readthedocs.io/en/latest/) for more details.
+Read the [documentation](https://DANT.readthedocs.io/en/latest/) for more details.
 
 ## Installation
 
-To install Kilomatch, follow these steps:
+To install DANT, follow these steps:
 
-- Download the code from the [Kilomatch](https://github.com/jiumao2/Kilomatch)
+- Download the code from the [DANT](https://github.com/jiumao2/DANT)
 
 - Development is based on MATLAB R2022b. The following toolboxes are required:
 
@@ -44,7 +44,7 @@ conda info --envs
 
 ## How to use it
 
-Please follow the [tutorial](https://kilomatch.readthedocs.io/en/latest/Tutorials.html) to run your dataset.  
+Please follow the [tutorial](https://dant.readthedocs.io/en/latest/Tutorials.html) to run your dataset.  
 
 Please raise an issue if you meet any bugs or have any questions. We are looking forward to your feedback!
 

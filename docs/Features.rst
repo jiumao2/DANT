@@ -84,7 +84,7 @@ Inter-spike interval histogram (ISI)
     :width: 40%
     :align: center
 
-This feature is not used in Kilomatch by default because it basically encode the same thing as autocorrelogram. Use the two features together will cause collinearity and impair the LDA performance. Nevertheless, we still put it here as an feature option. We compute the ISI for each unit within a window of 100 ms, using a bin width of 1 ms by default. The lag and bin width can be adjested in ``settings.json`` (see :ref:`Change default settings <ISI_setting_label>`).The distribution is then smoothed by a Gaussian kernel (:math:`\sigma` = 1 ms). The ISI similarity score between unit :math:`i` and unit :math:`j` is
+This feature is not used in DANT by default because it basically encode the same thing as autocorrelogram. Use the two features together will cause collinearity and impair the LDA performance. Nevertheless, we still put it here as an feature option. We compute the ISI for each unit within a window of 100 ms, using a bin width of 1 ms by default. The lag and bin width can be adjested in ``settings.json`` (see :ref:`Change default settings <ISI_setting_label>`).The distribution is then smoothed by a Gaussian kernel (:math:`\sigma` = 1 ms). The ISI similarity score between unit :math:`i` and unit :math:`j` is
 
 .. math::
     \mathbf{S}^{i,j}_{\text{ISI}} = \tanh^{-1}(\operatorname{corrcoef}(\text{ISI}_i, \text{ISI}_j))

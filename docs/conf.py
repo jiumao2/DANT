@@ -8,7 +8,7 @@
 
 import os
 
-project = 'Kilomatch'
+project = 'DANT'
 copyright = '2025, Yue Huang'
 author = 'Yue Huang'
 

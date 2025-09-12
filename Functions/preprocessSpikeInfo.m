@@ -47,7 +47,6 @@ function spikeInfo = preprocessSpikeInfo(user_settings, spikeInfo)
 %
 % Outputs:
 %   spikeInfo                   struct array (1 × n_unit)
-%       Original fields enriched with:
 %       .Location                 double (1 × 3)
 %           Estimated [x,y,z] spike source coordinates
 %       .Amplitude                double scalar

@@ -11,7 +11,6 @@ function Output = mergeOutput(user_settings, spikeInfo, shanks_data, output_fold
 %   user_settings            struct
 %       .waveformCorrection.n_templates   integer
 %           Number of templates per unit for waveform correction.
-%       (plus all other fields from user_settings.Params)
 %
 %   spikeInfo                struct array (1×Nunits)
 %       Preprocessed spike data for each unit, with at least:

@@ -1,14 +1,14 @@
-% Set the path to Kilomatch and settings
-path_kilomatch = '.\Kilomatch'; % The path where Kilomatch is installed
+% Set the path to DANT and settings
+path_DANT = '.\DANT'; % The path where DANT is installed
 path_settings = '.\settings.json'; % Please make sure the settings in the file are accurate
 
-addpath(path_kilomatch);
-addpath(genpath(fullfile(path_kilomatch, 'Functions')));
+addpath(path_DANT);
+addpath(genpath(fullfile(path_DANT, 'Functions')));
 
 user_settings = jsonc.jsoncDecode(fileread(path_settings)); % Read the settings
 tic_start = tic;
 
-%% Run Kilomatch
+%% Run DANT
 % load the data
 fprintf('Loading %s...\n', user_settings.path_to_data);
 load(user_settings.path_to_data);
@@ -47,7 +47,7 @@ for i_iter = 1:n_iter_motion_estimation
     % iterative HDBSCAN
     idx_features = cellfun(@(x)find(strcmpi(feature_names_all, x)), feature_names);
     [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, ~, weights, similarity_thres] = ...
-        iterativeClustering(user_settings, path_kilomatch, similarity_matrix_all(:,:,idx_features), feature_names, idx_unit_pairs, sessions);
+        iterativeClustering(user_settings, path_DANT, similarity_matrix_all(:,:,idx_features), feature_names, idx_unit_pairs, sessions);
     
     % compute drift
     Motion = computeMotion(user_settings, similarity_matrix, hdbscan_matrix, idx_unit_pairs, similarity_thres, sessions, locations);
@@ -78,7 +78,7 @@ idx_unit_pairs = getNearbyPairs(max_distance, sessions, locations, Motion);
 feature_names = user_settings.clustering.features';
 idx_features = cellfun(@(x)find(strcmpi(feature_names_all, x)), feature_names);
 [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all, weights, thres, good_matches_matrix, leafOrder] = ...
-    iterativeClustering(user_settings, path_kilomatch, similarity_matrix_all(:,:,idx_features), feature_names, idx_unit_pairs, sessions);
+    iterativeClustering(user_settings, path_DANT, similarity_matrix_all(:,:,idx_features), feature_names, idx_unit_pairs, sessions);
 
 % auto-curate the result
 [hdbscan_matrix_curated, idx_cluster_hdbscan_curated,...

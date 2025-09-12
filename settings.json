@@ -1,7 +1,7 @@
 {
     // please change the following paths to your own paths
     "path_to_data": ".\\spikeInfo.mat", // path to spikeInfo.mat
-    "output_folder": ".\\kilomatchOutput", // output folder
+    "output_folder": ".\\DANT_Output", // output folder
     "path_to_python": "path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe", // path to python (3.9+) which has hdbscan installed
     "save_intermediate_results": false, // whether to save the intermediate results
     "save_intermediate_figures": false, // whether to save the intermediate figures

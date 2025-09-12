@@ -18,8 +18,7 @@ function [x, y, z, ptt] = spikeLocation(waveforms_mean, channel_locations, n_nea
 %
 %   algorithm            char or string
 %       'center_of_mass'       return x,y via weighted average and z = 0;
-%       'monopolar_triangulation'
-%           fit amplitude decay model to estimate (x,y,z) and source amplitude.
+%       'monopolar_triangulation'       fit amplitude decay model to estimate (x,y,z) and source amplitude.
 %       Default: 'monopolar_triangulation'.
 %
 % Outputs:

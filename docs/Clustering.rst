@@ -69,7 +69,7 @@ Iterative clustering algorithm
 
 Recognizing that HDBSCAN benefits from refined similarity scores and LDA from accurate clustering for weight optimization, we created an iterative algorithm for clustering and feature selection. The weights are set equally at the beginning, and the clustering process and weight optimization process are performed alternatively. This iterative process converges reliably, producing consistent final clustering results. By default, 10 iterations will be done (see :ref:`here <n_iter_setting_label>` for how to change the number of iteration). 
 
-Kilomatch executes this iterative clustering multiple times --- before and after motion correction (see :ref:`iterative motion correction <iterative_motion_correction_label>` for details). After motion correction, the weight for waveform feature will increase in nearly all datasets, highlighting the improved reliability of motion-corrected waveforms in neuron tracking. 
+DANT executes this iterative clustering multiple times --- before and after motion correction (see :ref:`iterative motion correction <iterative_motion_correction_label>` for details). After motion correction, the weight for waveform feature will increase in nearly all datasets, highlighting the improved reliability of motion-corrected waveforms in neuron tracking. 
 
 
 

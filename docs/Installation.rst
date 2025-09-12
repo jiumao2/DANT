@@ -1,9 +1,9 @@
 Installation
 =======================
 
-To install Kilomatch, follow these steps:
+To install DANT, follow these steps:
 
-- Download the code from the `Kilomatch <https://github.com/jiumao2/Kilomatch>`_
+- Download the code from the `DANT <https://github.com/jiumao2/DANT>`_
 
 - Development is based on MATLAB R2022b. The following toolboxes are required:
 

@@ -3,7 +3,7 @@ function K = computeKernel2D(xp, yp, sig)
 % coordinate sets as Kilosort2.5 does.
 %
 % Computes a pairwise kernel matrix using separable exponential decay in x and y:
-% 1. Calculates absolute horizontal distances |xp_i(1) − yp_j(1)| and vertical distances |xp_i(2) − yp_j(2)|.
+% 1. Calculates absolute horizontal distances and vertical distances.
 % 2. Applies anisotropic scaling: horizontal scale = sig, vertical scale = 1.5*sig.
 % 3. Forms K(i,j) = exp(−(distx/sig)^1 − (disty/(1.5*sig))^1).
 %

@@ -48,7 +48,20 @@ sessions = Output.Sessions(units);
 units = units(idx_sort);
 sessions = sessions(idx_sort);
 
-probe_positions = Output.Motion.LinearScale*Output.Motion.Linear(sessions).*Output.Locations(units, 2)' + Output.Motion.Constant(sessions);
+if length(Output.Motion) > 1
+    shanks = unique(Output.IdxShank);
+    shank_this = Output.IdxShank(units(1));
+    idx_shank = find(shanks == shank_this);
+    Motion_this = Output.Motion(idx_shank);
+
+    weights = Output.SimilarityWeights(idx_shank, :);
+else
+    Motion_this = Output.Motion;
+    weights = Output.SimilarityWeights;
+end
+
+probe_positions = Motion_this.LinearScale*Motion_this.Linear(sessions).*Output.Locations(units, 2)' + Motion_this.Constant(sessions);
+
 locations = Output.Locations(units, 1:2) - probe_positions';
 colors = winter(length(units));
 
@@ -232,7 +245,7 @@ for k = 1:length(ax_similarity)
     if k == 1
         title(ax_similarity{2,k}, similarity_names{k});
     else
-        title(ax_similarity{2,k}, ['weight = ', num2str(Output.SimilarityWeights(k-1), '%.3f')]);
+        title(ax_similarity{2,k}, ['weight = ', num2str(weights(k-1), '%.3f')]);
     end
 end
 
@@ -261,7 +274,7 @@ temp_matrix(units, units) = 1;
 is_this_cluster = arrayfun(@(x)temp_matrix(Output.SimilarityPairs(x,1), Output.SimilarityPairs(x,2)), 1:size(similarity_all,1));
 idx_this_cluster = find(is_this_cluster == 1);
 
-similarity = sum(Output.SimilarityAll.*Output.SimilarityWeights, 2);
+similarity = sum(Output.SimilarityAll.*weights, 2);
 histogram(ax_similarity{1,1}, similarity(idx_unmatched), 'FaceColor', 'k', 'BinWidth', 0.1, 'Normalization', 'probability');
 histogram(ax_similarity{1,1}, similarity(idx_matched), 'FaceColor', 'b', 'BinWidth', 0.1, 'Normalization', 'probability');
 xline(ax_similarity{1,1}, Output.SimilarityThreshold, 'k:', 'lineWidth', 2);

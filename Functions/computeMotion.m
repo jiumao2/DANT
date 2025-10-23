@@ -50,15 +50,16 @@ function Motion = computeMotion(user_settings, similarity_matrix, hdbscan_matrix
 % Date:    20250821  
 % Author:  Yue Huang 
 
+n_session = max(sessions);
+session_pairs = sessions(idx_unit_pairs);
 idx_out = sub2ind(size(similarity_matrix), idx_unit_pairs(:,1), idx_unit_pairs(:,2));
 good_matrix = (similarity_matrix > similarity_thres) & (hdbscan_matrix == 1);
-idx_good = find(good_matrix(idx_out) == 1);
+idx_good = find(good_matrix(idx_out) == 1 & session_pairs(:,1) ~= session_pairs(:,2));
 
 fprintf('%d pairs of units are included for drift estimation!\n', length(idx_good));
 
 linear_scale = 1/1000;
-n_session = max(sessions);
-session_pairs = sessions(idx_unit_pairs);
+
 Motion = struct('Linear', zeros(1, n_session), 'Constant', zeros(1, n_session), 'LinearScale', linear_scale);
 
 if isempty(idx_good)

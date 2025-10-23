@@ -44,11 +44,13 @@ function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix
 % Author:  Yue Huang
 
 n_unit = size(waveforms_all, 1);
+max_similarity = 6; % r = 0.999987
 
 waveform_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'Waveform'))
     waveform_similarity_matrix = computeWaveformSimilarityMatrix(user_settings, waveforms_all, channel_locations);
 end
+waveform_similarity_matrix(waveform_similarity_matrix > max_similarity) = max_similarity;
 
 % compute other similarity
 ISI_similarity_matrix = zeros(n_unit);
@@ -57,6 +59,7 @@ if any(strcmpi(feature_names, 'ISI'))
     ISI_similarity_matrix(isnan(ISI_similarity_matrix)) = 0;
     ISI_similarity_matrix = atanh(ISI_similarity_matrix);
 end
+ISI_similarity_matrix(ISI_similarity_matrix > max_similarity) = max_similarity;
 
 AutoCorr_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'AutoCorr'))
@@ -64,6 +67,7 @@ if any(strcmpi(feature_names, 'AutoCorr'))
     AutoCorr_similarity_matrix(isnan(AutoCorr_similarity_matrix)) = 0;
     AutoCorr_similarity_matrix = atanh(AutoCorr_similarity_matrix);
 end
+AutoCorr_similarity_matrix(AutoCorr_similarity_matrix > max_similarity) = max_similarity;
 
 PETH_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'PETH'))
@@ -71,6 +75,7 @@ if any(strcmpi(feature_names, 'PETH'))
     PETH_similarity_matrix(isnan(PETH_similarity_matrix)) = 0;
     PETH_similarity_matrix = atanh(PETH_similarity_matrix);
 end
+PETH_similarity_matrix(PETH_similarity_matrix > max_similarity) = max_similarity;
 
 feature_names_all = {'Waveform', 'ISI', 'AutoCorr', 'PETH'};
 similarity_matrix_all = cat(3,...

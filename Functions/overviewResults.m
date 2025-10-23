@@ -314,7 +314,7 @@ xlim(ax_presence, [0.5, n_session+0.5]);
 ylim(ax_presence, [0.5, n_unique_units+0.5]);
 EasyPlot.colormap(ax_presence, 'gray');
 xlabel(ax_presence, 'Sessions');
-ylabel(ax_presence, 'Units');
+ylabel(ax_presence, 'Neurons');
 
 % result 
 ax_similarity_matrix = EasyPlot.createAxesAgainstAxes(fig, ax_presence, 'right',...
@@ -341,6 +341,6 @@ EasyPlot.colorbar(ax_similarity_matrix, 'label', 'Similarity',...
 xlabel(ax_similarity_matrix, 'Sessions');
 
 EasyPlot.cropFigure(fig);
-EasyPlot.exportFigure(fig, fullfile(user_settings.output_folder, 'Figures/Overview'), 'dpi', 300);
+EasyPlot.exportFigure(fig, fullfile(user_settings.output_folder, 'Figures/Overview'), 'dpi', 600);
 
 end

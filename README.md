@@ -13,7 +13,7 @@ Read the [documentation](https://DANT.readthedocs.io/en/latest/) for more detail
 
 To install DANT, follow these steps:
 
-- Download the code from the [DANT](https://github.com/jiumao2/DANT)
+- Download the code from [DANT](https://github.com/jiumao2/DANT)
 
 - Development is based on MATLAB R2022b. The following toolboxes are required:
 
@@ -44,7 +44,9 @@ conda info --envs
 
 ## How to use it
 
-Please follow the [tutorial](https://dant.readthedocs.io/en/latest/Tutorials.html) to run your dataset.  
+Example dataset is available [here](https://figshare.com/articles/dataset/Example_Dataset_for_DANT/30596258).
+
+Please follow the [tutorial](https://dant.readthedocs.io/en/latest/Tutorials.html) to run the example dataset or your dataset.  
 
 Please raise an issue if you meet any bugs or have any questions. We are looking forward to your feedback!
 

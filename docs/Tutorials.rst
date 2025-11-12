@@ -8,6 +8,8 @@ This tutorial provides a step-by-step guide on how to use the DANT package for t
 Prepare the data
 -----------------------
 
+Example dataset is available `here <https://figshare.com/articles/dataset/Example_Dataset_for_DANT/30596258>`_. You can download it and follow the steps below to run the example dataset. Or you can use your own dataset by following the same steps.
+
 To use DANT, you need to prepare your data in a specific format. The data should be an 1 x n struct array named ``spikeInfo`` with the following fields:
 
 =================  =============================            ==================

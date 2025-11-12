@@ -3,7 +3,7 @@ Installation
 
 To install DANT, follow these steps:
 
-- Download the code from the `DANT <https://github.com/jiumao2/DANT>`_
+- Download the code from `DANT <https://github.com/jiumao2/DANT>`_
 
 - Development is based on MATLAB R2022b. The following toolboxes are required:
 

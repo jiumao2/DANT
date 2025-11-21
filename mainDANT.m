@@ -26,7 +26,14 @@ waveforms_all = permute(waveforms_all, [3,1,2]);
 % motion estimation
 features_all_motion_estimation = user_settings.motionEstimation.features;
 n_iter_motion_estimation = length(features_all_motion_estimation);
-Motion = []; % initialize the motion to zeros
+
+% initialize waveform correction
+[waveforms_corrected, Motion] = initializeMotion( ...
+    user_settings,...
+    waveforms_all,...
+    sessions,...
+    channel_locations,...
+    locations);
 
 resultIter = struct();
 for i_iter = 1:n_iter_motion_estimation
@@ -36,13 +43,8 @@ for i_iter = 1:n_iter_motion_estimation
     
     % compute similarity matrix 
     feature_names = features_all_motion_estimation{i_iter}';
-    if i_iter == 1
-        [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
-            user_settings, waveforms_all, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs);
-    else
-        [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
-            user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs);
-    end
+    [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
+        user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs);
 
     % iterative HDBSCAN
     idx_features = cellfun(@(x)find(strcmpi(feature_names_all, x)), feature_names);

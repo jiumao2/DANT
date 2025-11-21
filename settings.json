@@ -18,7 +18,8 @@
     "waveformCorrection":{
         "n_nearest_channels": 38, // number of channels used for similarity calculation
         "linear_correction": false, // whether to do linear correction on motion estimation
-        "n_templates": 1 // number of templates (reference probes) used for waveform correction. Should be 1 or 2. 1: set the template at the mean of motion; 2:set two templates on the top and bottom of the probes
+        "n_templates": 1, // number of templates (reference probes) used for waveform correction. Should be 1 or 2. 1: set the template at the mean of motion; 2:set two templates on the top and bottom of the probes
+        "path_to_motion": "" // path to a pre-computed motion .npy file (vector sized by number of sessions, e.g., estimated by DREDge). If empty, motion will be estimated from the data.
     },
 
     // autocorrelogram similarity related parameters

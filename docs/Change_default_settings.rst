@@ -94,6 +94,15 @@ Default: ``1``
 
 The number of templates (reference probes) used for waveform correction. Should be 1 or 2. If set to 1, the template is set at the mean of motion; if set to 2, two templates are set on the top and bottom of the probes. If set to 2, the waveform correction and waveform similarity calculation will be done twice, which is more accurate but slower. It recommended to use 2 for datasets with large probe motion and many units located at the edges of the probe. See :ref:`Waveform correction <waveform_correction_label>` for more details about this parameter.
 
+.. _path_to_motion_label:
+
+``path_to_motion``
+++++++++++++++++++++++
+
+Default: ``""``
+
+The path to a pre-computed motion .npy file (vector sized by number of sessions, e.g., estimated by DREDge). If empty, motion will be estimated from the data. This parameter can be useful if you have already estimated the motion using other methods and want to apply it directly in DANT. See :ref:`Waveform correction <waveform_correction_label>` for more details.
+
 .. _autocorr_setting_label:
 
 autocorr

@@ -59,6 +59,8 @@ Probe motion across recording sessions was estimated using matched unit pairs (i
 
 This minimizes the discrepancy between the relative displacements of matched units and the inferred probe motion across sessions. The optimization was performed using MATLAB's ``fminunc``, and mean-subtracted probe positions (:math:`\boldsymbol{p}^* - \text{mean}(\boldsymbol{p}^*)`) were used for waveform correction to center displacements around a common reference. 
 
+DANT also allows for input of pre-computed motion estimates via a .npy file (see :ref:`here <path_to_motion_label>` for more details). For example, rigid motion estimates derived from other algorithms like DREDge can be directly applied in DANT's waveform correction process.
+
 .. _waveform_correction_label:
 
 Waveform correction

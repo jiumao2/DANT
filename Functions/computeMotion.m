@@ -120,42 +120,83 @@ mean_motion_boot = zeros(n_boot, n_session);
 min_motion_boot = zeros(n_boot, n_session);
 max_motion_boot = zeros(n_boot, n_session);
 
-if isempty(gcp('nocreate'))
-    parpool();
+% start parallel pool
+if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs ~= 0
+    is_parallel = true;
+else
+    is_parallel = false;
+end
+
+if is_parallel && isempty(gcp('nocreate'))
+    c = parcluster('local');
+    if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs == -1
+        parpool(c.NumWorkers);
+    else
+        parpool(user_settings.n_jobs);
+    end
 end
 
 progBar = ProgressBar(n_boot, ...
-    'IsParallel', true, ...
+    'IsParallel', is_parallel, ...
     'Title', 'Computing 95CI', ...
     'UpdateRate', 1 ...
     );
 progBar.setup([], [], []);
 
-parfor j = 1:n_boot
-    idx_rand = randi(length(dy), 1, length(dy));
-    dy_this = dy(idx_rand);
-    session_pairs_this = session_pairs_good(:, idx_rand);
-    depth_this = depth(idx_rand);
-
-    if user_settings.waveformCorrection.linear_correction
-        loss_fun = @(params)lossFunLinearCorrection(params, session_pairs_this, dy_this, depth_this, linear_scale, n_session);
-        params = fminunc(loss_fun, rand(1, n_session*2-2), options);
-        p_linear = [0, params(1:n_session-1)];
-        p_constant = [0, params(n_session:end)];
-
-        mean_motion_this = linear_scale*p_linear*mean(depth_this) + p_constant;
-        p_constant = p_constant - mean(mean_motion_this);
+if is_parallel
+    parfor j = 1:n_boot
+        idx_rand = randi(length(dy), 1, length(dy));
+        dy_this = dy(idx_rand);
+        session_pairs_this = session_pairs_good(:, idx_rand);
+        depth_this = depth(idx_rand);
     
-        mean_motion_boot(j,:) = linear_scale*p_linear*mean(depth_this) + p_constant;
-        min_motion_boot(j,:) = linear_scale*p_linear*min(depth_this) + p_constant;
-        max_motion_boot(j,:) = linear_scale*p_linear*max(depth_this) + p_constant;
-    else
-        loss_fun = @(params)lossFunLinearDefault(params, session_pairs_this, dy_this);
-        params = fminunc(loss_fun, rand(1, n_session), options);
-        mean_motion_boot(j,:) = params - mean(params);
+        if user_settings.waveformCorrection.linear_correction
+            loss_fun = @(params)lossFunLinearCorrection(params, session_pairs_this, dy_this, depth_this, linear_scale, n_session);
+            params = fminunc(loss_fun, rand(1, n_session*2-2), options);
+            p_linear = [0, params(1:n_session-1)];
+            p_constant = [0, params(n_session:end)];
+    
+            mean_motion_this = linear_scale*p_linear*mean(depth_this) + p_constant;
+            p_constant = p_constant - mean(mean_motion_this);
+        
+            mean_motion_boot(j,:) = linear_scale*p_linear*mean(depth_this) + p_constant;
+            min_motion_boot(j,:) = linear_scale*p_linear*min(depth_this) + p_constant;
+            max_motion_boot(j,:) = linear_scale*p_linear*max(depth_this) + p_constant;
+        else
+            loss_fun = @(params)lossFunLinearDefault(params, session_pairs_this, dy_this);
+            params = fminunc(loss_fun, rand(1, n_session), options);
+            mean_motion_boot(j,:) = params - mean(params);
+        end
+    
+        updateParallel(1);
     end
-
-    updateParallel(1);
+else
+    for j = 1:n_boot
+        idx_rand = randi(length(dy), 1, length(dy));
+        dy_this = dy(idx_rand);
+        session_pairs_this = session_pairs_good(:, idx_rand);
+        depth_this = depth(idx_rand);
+    
+        if user_settings.waveformCorrection.linear_correction
+            loss_fun = @(params)lossFunLinearCorrection(params, session_pairs_this, dy_this, depth_this, linear_scale, n_session);
+            params = fminunc(loss_fun, rand(1, n_session*2-2), options);
+            p_linear = [0, params(1:n_session-1)];
+            p_constant = [0, params(n_session:end)];
+    
+            mean_motion_this = linear_scale*p_linear*mean(depth_this) + p_constant;
+            p_constant = p_constant - mean(mean_motion_this);
+        
+            mean_motion_boot(j,:) = linear_scale*p_linear*mean(depth_this) + p_constant;
+            min_motion_boot(j,:) = linear_scale*p_linear*min(depth_this) + p_constant;
+            max_motion_boot(j,:) = linear_scale*p_linear*max(depth_this) + p_constant;
+        else
+            loss_fun = @(params)lossFunLinearDefault(params, session_pairs_this, dy_this);
+            params = fminunc(loss_fun, rand(1, n_session), options);
+            mean_motion_boot(j,:) = params - mean(params);
+        end
+    
+        progBar([], [], []);
+    end    
 end
 progBar.release();
 

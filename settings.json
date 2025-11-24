@@ -2,9 +2,10 @@
     // please change the following paths to your own paths
     "path_to_data": ".\\spikeInfo.mat", // path to spikeInfo.mat
     "output_folder": ".\\DANT_Output", // output folder
-    "path_to_python": "path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe", // path to python (3.9+) which has hdbscan installed
+    "path_to_python": "path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe", // path to python (3.9+) which has hdbscan installed. In Mac or Linux, please provide the full path to the python executable, e.g., "/Users/username/anaconda3/envs/hdbscan/bin/python"
     "save_intermediate_results": false, // whether to save the intermediate results
     "save_intermediate_figures": false, // whether to save the intermediate figures
+    "n_jobs": -1, // number of parallel jobs. Set to -1 to use all available cores. Set to 0 to disable parallel processing.
 
     "centering_waveforms": false, // whether to center the waveforms before processing. If set to true, the waveforms will be centered to the trough of the waveform according to the peak channel.
 

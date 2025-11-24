@@ -36,6 +36,8 @@ pip install hdbscan
 "path_to_python": "path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe"
 ```
 
+In Mac or Linux, the path may look like `/Users/username/anaconda3/envs/hdbscan/bin/python`.
+
 You can get the path by running the following command in the Anaconda prompt:
 
 ```bash

@@ -3,7 +3,9 @@
 [![View DANT on GitHub](https://img.shields.io/badge/GitHub-DANT-blue.svg)](https://github.com/jiumao2/DANT)
 [![Documentation Status](https://app.readthedocs.org/projects/dant/badge/)](https://dant.readthedocs.io/en/latest/)
 
-A MATLAB toolbox for tracking the neurons across days.
+A MATLAB toolbox for tracking the neurons across days with high-density probes.
+
+Preprint: [Density-based longitudinal neuron tracking in high-density electrophysiological recordings](https://www.biorxiv.org/content/10.64898/2025.12.19.695632v1)
 
 Check out the Python version of DANT [here](https://github.com/jiumao2/pyDANT)!  
 
@@ -51,6 +53,22 @@ Example dataset is available [here](https://figshare.com/articles/dataset/Exampl
 Please follow the [tutorial](https://dant.readthedocs.io/en/latest/Tutorials.html) to run the example dataset or your dataset.  
 
 Please raise an issue if you meet any bugs or have any questions. We are looking forward to your feedback!
+
+## Citation
+
+If you use DANT in your work, please cite:
+
+```bibtex
+@article {Huang2025DANT,
+    author = {Huang, Yue and Wang, Hanbo and Cao, Jiaming and Chen, Yu and Wang, Xuanning and Zhao, Yujie and Ren, Hengkun and Zheng, Qiang and Yu, Jianing},
+    title = {Density-based longitudinal neuron tracking in high-density electrophysiological recordings},
+    year = {2025},
+    doi = {10.64898/2025.12.19.695632},
+    publisher = {Cold Spring Harbor Laboratory},
+    URL = {https://www.biorxiv.org/content/early/2025/12/23/2025.12.19.695632},
+    journal = {bioRxiv}
+}
+```
 
 ## References
 

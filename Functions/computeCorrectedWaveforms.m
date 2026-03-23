@@ -52,6 +52,12 @@ motion_top = Motion.LinearScale*Motion.Linear*max_channel_depth + Motion.Constan
 
 min_motion = min([motion_bottom, motion_top]);
 max_motion = max([motion_bottom, motion_top]);
+
+if n_templates == 1
+    motion_templates = 0;
+else
+    motion_templates = linspace(min_motion, max_motion, n_templates);
+end
 fprintf('The range of motion: [%.1f μm ~ %.1f μm]\n', min_motion, max_motion);
 
 % start parallel pool
@@ -72,13 +78,7 @@ end
 
 for i_template = 1:n_templates
     Motion_this = Motion;
-    if n_templates == 2
-        if i_template == 1
-            Motion_this.Constant = Motion_this.Constant - min_motion;
-        else
-            Motion_this.Constant = Motion_this.Constant - max_motion;
-        end
-    end
+    Motion_this.Constant = Motion_this.Constant - motion_templates(i_template);
 
     progBar = ProgressBar(n_unit, ...
         'IsParallel', is_parallel, ...

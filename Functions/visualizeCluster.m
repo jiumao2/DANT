@@ -65,7 +65,11 @@ probe_positions = Motion_this.LinearScale*Motion_this.Linear(sessions).*Output.L
 locations = Output.Locations(units, 1:2) - probe_positions';
 colors = winter(length(units));
 
-waveforms = waveforms(units,:,:,1);
+if length(size(waveforms)) == 4
+    mean_ptts = mean(max(waveforms(units,:,:,:), [], 3) - min(waveforms(units,:,:,:), [], 3), 1:3);
+    [~, idx_max] = max(mean_ptts);
+    waveforms = waveforms(units,:,:,idx_max);
+end
 
 ISI = [];
 if isfield(spikeInfo, 'ISI')

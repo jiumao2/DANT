@@ -53,18 +53,24 @@ if ~isfile(user_settings.waveformCorrection.path_to_motion)
 end
 
 % load motion from file
+fprintf('Loading pre-computed motion from file: %s\n', user_settings.waveformCorrection.path_to_motion)
 motion = readNPY(user_settings.waveformCorrection.path_to_motion);
 
 % check the size of motion
 if length(motion) ~= n_session
     error('The size of motion from file is not correct!');
 end
-if size(motion, 1) ~= 1
+if size(motion, 1) ~= 1 && size(motion, 1) ~= 2
     motion = motion';
 end
 
 % update Motion
-Motion.Constant = motion;
+if size(motion, 1) == 1
+    Motion.Constant = motion;
+else
+    Motion.Linear = motion(1,:);
+    Motion.Constant = motion(2,:);
+end
 
 % compute corrected waveforms and save to Waveforms.mat
 waveforms_corrected = computeCorrectedWaveforms(user_settings, waveforms_all, channel_locations, sessions, locations, Motion);

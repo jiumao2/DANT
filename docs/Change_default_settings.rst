@@ -221,6 +221,14 @@ Default: ``10``
 
 The number of iterations for the iterative clustering algorithm. The algorithm usually converges well within 6 iterations. As HDBSCAN runs very fast, the default value of 10 is set to ensure the convergence while not slowing down the process too much. 
 
+.. _weight_tol_setting_label:
+
+``weight_tol``
+++++++++++++++++++++++++
+
+Default: ``1e-8``
+
+Sets the convergence threshold for feature weight updates; the iterative clustering stops early if the $L_1$ norm of the weight change falls below this value.
 
 autoCuration
 -------------------

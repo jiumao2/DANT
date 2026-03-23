@@ -3,60 +3,69 @@
 [![View DANT on GitHub](https://img.shields.io/badge/GitHub-DANT-blue.svg)](https://github.com/jiumao2/DANT)
 [![Documentation Status](https://app.readthedocs.org/projects/dant/badge/)](https://dant.readthedocs.io/en/latest/)
 
-A MATLAB toolbox for tracking the neurons across days with high-density probes.
+**DANT** is a MATLAB toolbox designed for the robust, longitudinal tracking of neurons across multiple recording sessions using high-density probes.
 
-Preprint: [Density-based longitudinal neuron tracking in high-density electrophysiological recordings](https://www.biorxiv.org/content/10.64898/2025.12.19.695632v1)
+---
 
-Check out the Python version of DANT [here](https://github.com/jiumao2/pyDANT)!  
+### 📄 Preprint
+**[Density-based longitudinal neuron tracking in high-density electrophysiological recordings](https://www.biorxiv.org/content/10.64898/2025.12.19.695632v1)**
 
-Read the [documentation](https://DANT.readthedocs.io/en/latest/) for more details.
+📚 **[Read the Documentation](https://dant.readthedocs.io/en/latest/)**
 
-## Installation
+🐍 **[Check out the Python version (pyDANT)](https://github.com/jiumao2/pyDANT)**
 
-To install DANT, follow these steps:
+---
 
-- Download the code from [DANT](https://github.com/jiumao2/DANT)
+## ⚙️ Installation
 
-- Development is based on MATLAB R2022b. The following toolboxes are required:
+DANT operates primarily in MATLAB but utilizes a lightweight Python environment to run the HDBSCAN clustering algorithm efficiently. 
 
-    - Statistics and Machine Learning Toolbox
-    -   Optimization Toolbox
-    -   Parallel Computing Toolbox
-
-- Python 3.9 \~ 3.11 with `scikit-learn` and `hdbscan` packages installed ([Anaconda](https://www.anaconda.com/download) recommended).
-
-```python
-conda create -n hdbscan python=3.10
-conda activate hdbscan
-pip install scikit-learn
-pip install hdbscan
+### 1. Download DANT
+Clone or download the repository to your local machine:
+```bash
+git clone [https://github.com/jiumao2/DANT.git](https://github.com/jiumao2/DANT.git)
 ```
 
-- Specify the Python executable path in `settings.json`
+### 2. MATLAB Prerequisites
+Development is based on **MATLAB R2022b**. Ensure the following toolboxes are installed in your MATLAB environment:
+* Statistics and Machine Learning Toolbox
+* Optimization Toolbox
+* Parallel Computing Toolbox
 
-```json
-"path_to_python": "path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe"
-```
+### 3. Python Environment Setup
+DANT requires Python (3.9 – 3.11) with the `scikit-learn` and `hdbscan` packages. We highly recommend using Anaconda to manage this environment.
 
-In Mac or Linux, the path may look like `/Users/username/anaconda3/envs/hdbscan/bin/python`.
-
-You can get the path by running the following command in the Anaconda prompt:
+Open your Anaconda prompt or terminal and run:
 
 ```bash
-conda info --envs
+conda create -n hdbscan python=3.10
+conda activate hdbscan
+pip install scikit-learn hdbscan
 ```
 
-## How to use it
+### 4. Configure DANT
+Finally, link your new Python environment to DANT by updating the `settings.json` file in your DANT directory.
 
-Example dataset is available [here](https://figshare.com/articles/dataset/Example_Dataset_for_DANT/30596258).
+Specify the absolute path to the Python executable in your `hdbscan` environment:
 
-Please follow the [tutorial](https://dant.readthedocs.io/en/latest/Tutorials.html) to run the example dataset or your dataset.  
+```json
+"path_to_python": "C:\\path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe"
+```
 
-Please raise an issue if you meet any bugs or have any questions. We are looking forward to your feedback!
+> **Note for Mac/Linux users:** Your path will typically look like `/Users/username/anaconda3/envs/hdbscan/bin/python`. You can easily find the exact path by running `conda info --envs` in your terminal.
 
-## Citation
+## 🚀 Getting Started
 
-If you use DANT in your work, please cite:
+To help you get familiar with the pipeline, we have provided an example dataset and a step-by-step walkthrough.
+
+1. **Download the Data:** [Example Dataset for DANT (Figshare)](https://figshare.com/articles/dataset/Example_Dataset_for_DANT/30596258)
+2. **Run the Pipeline:** Follow our comprehensive [Tutorial](https://dant.readthedocs.io/en/latest/Tutorials.html) to run the example data or process your own recordings.
+
+If you encounter any bugs, have questions, or want to suggest a feature, please [open an issue](https://github.com/jiumao2/DANT/issues). We look forward to your feedback!
+
+## 📝 Citation
+
+If you use DANT in your research, please cite our preprint:
 
 ```bibtex
 @article {Huang2025DANT,
@@ -70,38 +79,19 @@ If you use DANT in your work, please cite:
 }
 ```
 
-## References
+## 📚 References & Acknowledgements
 
-> [HDBSCAN](https://scikit-learn.org/stable/modules/clustering.html#hdbscan)  
-> HDBSCAN - Hierarchical Density-Based Spatial Clustering of Applications with Noise. Performs DBSCAN over varying epsilon values and integrates the result to find a clustering that gives the best stability over epsilon. This allows HDBSCAN to find clusters of varying densities (unlike DBSCAN), and be more robust to parameter selection.
-> 
-> Campello, R.J.G.B., Moulavi, D., Sander, J. (2013). Density-Based Clustering Based on Hierarchical Density Estimates. In: Pei, J., Tseng, V.S., Cao, L., Motoda, H., Xu, G. (eds) Advances in Knowledge Discovery and Data Mining. PAKDD 2013. Lecture Notes in Computer Science(), vol 7819. Springer, Berlin, Heidelberg. Density-Based Clustering Based on Hierarchical Density Estimates  
->
-> L. McInnes and J. Healy, (2017). Accelerated Hierarchical Density Based Clustering. In: IEEE International Conference on Data Mining Workshops (ICDMW), 2017, pp. 33-42. Accelerated Hierarchical Density Based Clustering
+DANT builds upon and integrates several excellent open-source tools. We extend our gratitude to the authors of the following packages:
 
-> [Kilosort](https://github.com/MouseLand/Kilosort)  
-> Fast spike sorting with drift correction  
-> 
-> Pachitariu, Marius, Shashwat Sridhar, Jacob Pennington, and Carsen Stringer. “Spike Sorting with Kilosort4.” Nature Methods 21, no. 5 (May 2024): 914–21. https://doi.org/10.1038/s41592-024-02232-7.
+* **[HDBSCAN](https://scikit-learn.org/stable/modules/clustering.html#hdbscan):** Hierarchical Density-Based Spatial Clustering of Applications with Noise. (Campello et al., 2013; McInnes & Healy, 2017).
+* **[Kilosort](https://github.com/MouseLand/Kilosort):** Fast spike sorting with drift correction. (Pachitariu et al., 2024).
+* **[DREDge](https://github.com/evarol/DREDge):** Robust online multiband drift estimation in electrophysiology data. (Windolf et al., 2025).
+* **[EasyPlot](https://github.com/jiumao2/EasyPlot):** A MATLAB package for generating clean scientific figures.
+* **[npy-matlab](https://github.com/kwikteam/npy-matlab):** Functions to read/write NumPy `.npy` files in MATLAB.
+* **[JSON+C parsing for MATLAB](https://github.com/seanbone/matlab-json-c):** A simple parser for JSON with Comments written in MATLAB.
+* **[MatlabProgressBar](https://github.com/JAAdrian/MatlabProgressBar):** A smart `tqdm`-style progress bar optimized for MATLAB and parallel computing.
 
-> [DREDge](https://github.com/evarol/DREDge)  
-> Robust online multiband drift estimation in electrophysiology data  
-> 
-> Windolf, Charlie, Han Yu, Angelique C. Paulk, Domokos Meszéna, William Muñoz, Julien Boussard, Richard Hardstone, et al. “DREDge: Robust Motion Correction for High-Density Extracellular Recordings across Species.” Nature Methods, March 6, 2025. https://doi.org/10.1038/s41592-025-02614-5.
-
-> [EasyPlot](https://github.com/jiumao2/EasyPlot)  
-> A MATLAB package for making scientific figures easily
-
-> [npy-matlab](https://github.com/kwikteam/npy-matlab)  
-> Experimental code to read/write NumPy .NPY files in MATLAB
-
-> [JSON+C parsing for MATLAB](https://github.com/seanbone/matlab-json-c/releases/tag/v1.1)  
-> A simple parser for JSON with Comments written in MATLAB
-
-> [MatlabProgressBar](https://github.com/JAAdrian/MatlabProgressBar)  
-> This MATLAB class provides a smart progress bar like tqdm in the command window and is optimized for progress information in simple iterations or large frameworks with full support of parallel parfor loops provided by the MATLAB Parallel Computing Toolbox.  
-
-## License
+## 📄 License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 

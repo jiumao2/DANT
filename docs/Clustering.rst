@@ -67,7 +67,11 @@ Iterative clustering algorithm
    :width: 100%
    :align: center
 
-Recognizing that HDBSCAN benefits from refined similarity scores and LDA from accurate clustering for weight optimization, we created an iterative algorithm for clustering and feature selection. The weights are set equally at the beginning, and the clustering process and weight optimization process are performed alternatively. This iterative process converges reliably, producing consistent final clustering results. By default, 10 iterations will be done (see :ref:`here <n_iter_setting_label>` for how to change the number of iteration). 
+Recognizing that HDBSCAN benefits from refined similarity scores and LDA requires accurate cluster labels for weight optimization, DANT employs an iterative algorithm for simultaneous clustering and feature selection. This process ensures that the most informative features for a specific dataset are prioritized when determining unit similarity across sessions.
+
+At the start of the algorithm, weights are initialized equally across all selected features. The clustering and weight optimization processes are then performed alternately: HDBSCAN identifies unit clusters based on current weights, and LDA subsequently refines those weights based on the identified clusters. This mutual refinement produces stable, biologically consistent results that are more robust than a single-pass approach.
+
+To ensure efficient convergence, the algorithm monitors the change in feature weights across successive iterations. Once the weight updates fall below the threshold specified by ``weight_tol`` (see :ref:`here <weight_tol_setting_label>` for details), the algorithm terminates. This convergence-based approach ensures the process continues until the clustering results have stabilized, while preventing unnecessary computation. A maximum limit of 10 iterations is maintained as a secondary safeguard (see :ref:`here <n_iter_setting_label>` for details on modifying this limit).
 
 DANT executes this iterative clustering multiple times --- before and after motion correction (see :ref:`iterative motion correction <iterative_motion_correction_label>` for details). After motion correction, the weight for waveform feature will increase in nearly all datasets, highlighting the improved reliability of motion-corrected waveforms in neuron tracking. 
 

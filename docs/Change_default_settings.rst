@@ -188,6 +188,13 @@ Default:
 
 The features used for motion estimation each iteration. For the default values, the motion esimation will be done twice, with the same three features. The features should be chosen from "Waveform", "AutoCorr", "ISI" or "PETH". In some datasets with huge probe motion (> 100 μm), the waveform feature may not be reliable, and you can use "AutoCorr" and "PETH" for the first iteration.
 
+``stop_early``
++++++++++++++++++++++++
+
+Default: ``true``
+
+Determines whether to terminate the motion estimation loop early when the number of matched unit pairs fails to increase, preventing redundant iterations and over-fitting.
+
 clustering
 -------------------
 

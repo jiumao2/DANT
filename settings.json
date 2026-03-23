@@ -51,7 +51,8 @@
     "clustering":{
         "max_distance": 100, // um. Unit pairs with distance larger than this value in Y direction will be considered as different clusters
         "features": ["Waveform", "AutoCorr"], // features used for final clustering. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
-        "n_iter": 10 // number of iterations for the clustering algorithm
+        "n_iter": 10, // max number of iterations for the clustering algorithm
+        "weight_tol": 1e-8 // tolerance for weight change in the clustering algorithm. If the change of weights is smaller than this value, the algorithm will stop
     },
 
     // parameters for curating the clusters

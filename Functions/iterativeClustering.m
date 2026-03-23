@@ -12,6 +12,7 @@ function [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all
 % Inputs:
 %   user_settings             struct
 %       .clustering.n_iter         Number of HDBSCAN–LDA iterations.
+%       .clustering.weight_tol     Tolerance for early stopping based on weight changes (default: 1e-5).
 %       .output_folder             Directory to save settings and outputs.
 %       .path_to_python            Path to the Python executable.
 %
@@ -75,6 +76,13 @@ end
 weights = ones(1, n_feature)./n_feature;
 similarity_matrix = squeeze(sum(similarity_matrix_all.*reshape(weights, 1, 1, n_feature), 3));
 
+% Define weight tolerance for early stopping
+if isfield(user_settings.clustering, 'weight_tol')
+    weight_tol = user_settings.clustering.weight_tol;
+else
+    weight_tol = 1e-8; % Default tolerance
+end
+
 for iter = 1:user_settings.clustering.n_iter
     fprintf('Iteration %d starts!\n', iter);
 
@@ -125,6 +133,8 @@ for iter = 1:user_settings.clustering.n_iter
     is_matched = hdbscan_matrix(idx_pairs_in_matrix);
 
     if iter ~= user_settings.clustering.n_iter
+        prev_weights = weights; % store weights prior to LDA update
+
         % LDA and update weights
         mdl = fitcdiscr(similarity_all, is_matched);
         temp = (mdl.Coeffs(1,2).Linear)';
@@ -132,9 +142,15 @@ for iter = 1:user_settings.clustering.n_iter
         disp('Weights:');
         disp(strjoin(feature_names, '   '));
         disp(weights);
-        
+
         % update the similarity matrix
         similarity_matrix = squeeze(sum(similarity_matrix_all.*reshape(weights, 1, 1, n_feature), 3));
+
+        % check convergence criterion for early stopping
+        if sum(abs(weights - prev_weights)) < weight_tol
+            fprintf('Convergence reached at iteration %d (weight change < tol). Stopping early.\n', iter);
+            break;
+        end
     end
 end
 

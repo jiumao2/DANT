@@ -228,7 +228,7 @@ The number of iterations for the iterative clustering algorithm. The algorithm u
 
 Default: ``1e-8``
 
-Sets the convergence threshold for feature weight updates; the iterative clustering stops early if the $L_1$ norm of the weight change falls below this value.
+Sets the convergence threshold for feature weight updates; the iterative clustering stops early if the :math:`L_1` norm of the weight change falls below this value.
 
 autoCuration
 -------------------

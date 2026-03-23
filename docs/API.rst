@@ -23,6 +23,8 @@ API
 
 .. autofunction:: graphEditNumber
 
+.. autofunction:: initializeMotion
+
 .. autofunction:: iterativeClustering
 
 .. autofunction:: lossFunLinearCorrection

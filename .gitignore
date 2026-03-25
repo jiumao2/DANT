@@ -8,3 +8,4 @@ site/
 .vscode
 docs/images/*.ai
 docs/images/links
+docs/_build/

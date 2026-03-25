@@ -1,8 +1,8 @@
 sphinx_rtd_theme
 
 sphinx-autobuild
-sphinxcontrib-matlabdomain
 
+pyDANT
 scikit-learn
 ipykernel
 hdbscan

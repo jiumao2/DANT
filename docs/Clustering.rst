@@ -4,9 +4,9 @@ Clustering
 How to track neurons across days
 -----------------------------------
 
-Now we have the methods to compute the similarity between any two units (see :doc:`Features <Features>` and :doc:`Motion correction <Motion_correction>`). Then, how to use it to track neurons across sessions? 
+Now we have the tools to compute similarity between any two units (see :doc:`Features <Features>` and :doc:`Motion correction <Motion_correction>`). The next question is: how do we use that information to actually track neurons across sessions? 
 
-Traditionally, scientists focused on finding the matches between 2 sessions. What they did is basically a binary classification problem, that is, classify all the unit pairs from 2 sessions into "matched" class or "unmatched" class. The selected features and classification algorithm varied across different algorithm. However, it doesn't solve the tracking algorithm. In tracking problem, it searches for "chains" (composed of multiple units from different sessions) instead of "matches" (composed of 2 units). It remains a unsolved and difficult problem to turn the "matches" into "chains" in an effective way.
+Traditionally, researchers focused on finding matches between two sessions. That is essentially a binary classification problem: classify all unit pairs from two sessions into a "matched" class or an "unmatched" class. The selected features and classification method vary across different algorithms. However, that still does not solve the full tracking problem. In neuron tracking, we need to identify "chains" (made up of multiple units from different sessions), not just "matches" (made up of two units). Turning those pairwise matches into reliable chains remains an unsolved and challenging problem, and that is exactly the gap DANT is designed to address.
 
 .. image:: ./images/UMAP.png
    :width: 100%
@@ -14,7 +14,7 @@ Traditionally, scientists focused on finding the matches between 2 sessions. Wha
 
 |
 
-Here, we look at the tracking problem from another perspective. We formulated the problem as a clustering task, treating units from different sessions as points in a high-dimensional space where units from the same neuron cluster together. The unsupervised UMAP visualizes all units in a 2D space (left panel). Now our goal is to group the units from the same neurons with a proper clustering algorithm (right panel, the clustering result is color-coded). Common clustering algorithms such as k-means, Gaussian mixture models, and DBSCAN are unsuitable for this task due to unknown cluster counts, small transient neuron clusters, and non-Gaussian data distributions. However, HDBSCAN worked for the tracking problem despite all these difficulties.
+Here, we approach the tracking problem from a different angle, and that shift in perspective makes the problem much more tractable. We formulate it as a clustering task, treating units from different sessions as points in a high-dimensional space, where units from the same neuron cluster together. The unsupervised UMAP projection visualizes all units in a 2D space (left panel). Our goal is then to group units from the same neuron with a suitable clustering algorithm (right panel, where the clustering result is color-coded). Common clustering algorithms such as k-means, Gaussian mixture models, and DBSCAN are not well suited to this task because the number of clusters is unknown, some neuron clusters are small and transient, and the data distribution is not Gaussian. This is exactly where HDBSCAN becomes useful, because it can handle the messy structure that neuron-tracking data naturally produce.
 
 
 .. _HDBSCAN_label:
@@ -26,22 +26,20 @@ HDBSCAN
    :width: 100%
    :align: center
 
-HDBSCAN is an unsupervised clustering algorithm extending DBSCAN by
-converting it into a hierarchical clustering algorithm. We utilized the
-Python implementation at https://github.com/scikit-learn-contrib/hdbscan. Parameters in this paper were:
-``min_cluster_size`` = 2, ``max_cluster_size`` = maximum session number and
-``min_samples`` = 1. The input distance matrix :math:`\mathbf{D}` is defined in
-the form:
+HDBSCAN is an unsupervised clustering algorithm that extends DBSCAN by
+turning it into a hierarchical clustering method. We used the
+Python implementation at https://github.com/scikit-learn-contrib/hdbscan. The parameters used in this paper were:
+``min_cluster_size`` = 2, ``max_cluster_size`` = maximum session number,
+and ``min_samples`` = 1. The input distance matrix :math:`\mathbf{D}` is defined
+as:
 
 .. math::
 
     \begin{aligned}
     \mathbf{D}_{i,j} &={\begin{cases}0&{\text{if }}i=j,\\\frac{1}{1+\tanh(\mathbf{S}_{i,j})}&{\text{else }}\end{cases}}
-    \end{aligned}
+    \end{aligned}.
 
-.
-
-HDBSCAN begins by transforming similarity scores (1st panel) into distances (2nd panel) and constructing a robust single-linkage tree, which reorders units such that similar units are spatially close (3rd and 4th panels). Then it extracts the clusters from the tree based on the maximum stability of clusters (the white dashed boxes indicate clusters). Units from the same neuron form distinct blocks in the distance matrix (4th panel) and distinct clusters in UMAP projections, validating the clustering approach.
+HDBSCAN begins by transforming similarity scores (1st panel) into distances (2nd panel) and constructing a robust single-linkage tree, which reorders units so that similar units lie close to one another (3rd and 4th panels). It then extracts clusters from the tree based on cluster stability (the white dashed boxes indicate clusters). Units from the same neuron form distinct blocks in the distance matrix (4th panel) and distinct clusters in the UMAP projection, which supports the clustering-based view of the problem.
 
 .. _weight_optimization_label:
 
@@ -52,11 +50,11 @@ Weight optimization
    :width: 60%
    :align: center
 
-Another problem is the optimization of the weights of different metrics. Different metrics are not equally informative, and the importance of a certain feature might vary with animals, brain regions, electrode types and others. Therefore, it is crucial to determine the best weights for each dataset. With equally set weights initially (see :ref:`weighted similarity <weighted_similarity_label>` for details), we can get the matches and nonmatches by HDBSCAN. The matches and nonmatches form distinct clusters (blue points and black points) when plotting the similarity scores in a 2-dimensional subspace. 
+Another challenge is deciding how much each metric should matter. These metrics are not equally informative, and the importance of a given feature may vary across animals, brain regions, electrode types, and other factors. It is therefore important to determine the best weights for each dataset. Starting from equal weights (see :ref:`weighted similarity <weighted_similarity_label>` for details), HDBSCAN already gives us a useful first split between matches and nonmatches. When the similarity scores are plotted in a 2-dimensional subspace, matches and nonmatches form distinct clusters (blue and black points). 
 
-To estimate the importance / weights of different metrics, we resort to linear discriminant analysis (LDA), which quickly finds a one-dimensional projection maximizing the separation between the matches and nonmatches. Because of disproportionately more unmatched pairs than matched pairs, only spatially close unit pairs (within 100 μm in :math:`y` position by default) were included. This analysis was performed using MATLAB's function ``fitcdiscr``. The LDA model assumes that similarity scores for matched and unmatched pairs follow multivariate Gaussian distributions with identical covariance matrices. The model generates a hyperplane that maximizes separation between these two classes. The coefficients of the hyperplane's normal vector served as weights to generate a single, optimized similarity score, reflecting the relative importance of each feature. Projecting data onto this one-dimensional vector maximized the discrimination between matches and non-matches. We take the weights of different metrics on that projection as the optimized weights for computing the final similarity scores. Last, the updated similarity matrix provided by LDA will be used in the next round of clustering. Additionally, the hyperplane defines a similarity threshold (the red dased line), which is useful in the later :ref:`curation step <auto_curation_step2_label>`.
+To estimate the importance, or weight, of each metric, we use linear discriminant analysis (LDA), which finds a one-dimensional projection that maximizes separation between matches and nonmatches. Because unmatched pairs greatly outnumber matched pairs, only spatially close unit pairs (within 100 μm in the :math:`y` position by default) are included. This analysis is performed using MATLAB's ``fitcdiscr`` function. The LDA model assumes that similarity scores for matched and unmatched pairs follow multivariate Gaussian distributions with identical covariance matrices. It then generates a hyperplane that maximizes separation between the two classes. The coefficients of the hyperplane's normal vector serve as weights for building a single optimized similarity score, reflecting the relative importance of each feature. Projecting the data onto this one-dimensional vector maximizes the separation between matches and nonmatches. We then use the weights from that projection to compute the final similarity scores. Finally, the updated similarity matrix provided by LDA is used in the next round of clustering. In addition, the hyperplane defines a similarity threshold (the red dashed line), which becomes useful in the later :ref:`curation step <auto_curation_step2_label>`.
 
-The initial clustering rounds identifies matches used for motion correction. To minimize false positives, these matches must also satisfy the LDA decision boundary. The final clustering round generates the output results, followed by the auto curation step.
+The initial clustering rounds identify the matches that seed motion correction. To minimize false positives, these matches must also satisfy the LDA decision boundary. The final clustering round generates the output results, followed by the auto-curation step.
 
 .. _iterative_clustering_algorithm_label:
 
@@ -67,13 +65,13 @@ Iterative clustering algorithm
    :width: 100%
    :align: center
 
-Recognizing that HDBSCAN benefits from refined similarity scores and LDA requires accurate cluster labels for weight optimization, DANT employs an iterative algorithm for simultaneous clustering and feature selection. This process ensures that the most informative features for a specific dataset are prioritized when determining unit similarity across sessions.
+Because HDBSCAN benefits from refined similarity scores, and LDA in turn benefits from accurate cluster labels, DANT uses an iterative algorithm that lets the two improve each other step by step. This process helps prioritize the most informative features for each dataset when determining unit similarity across sessions.
 
-At the start of the algorithm, weights are initialized equally across all selected features. The clustering and weight optimization processes are then performed alternately: HDBSCAN identifies unit clusters based on current weights, and LDA subsequently refines those weights based on the identified clusters. This mutual refinement produces stable, biologically consistent results that are more robust than a single-pass approach.
+At the start of the algorithm, weights are initialized equally across all selected features. Clustering and weight optimization are then performed alternately: HDBSCAN identifies unit clusters based on the current weights, and LDA refines those weights based on the resulting clusters. This back-and-forth refinement produces stable, biologically consistent results that are more robust than what a single-pass approach can usually deliver.
 
-To ensure efficient convergence, the algorithm monitors the change in feature weights across successive iterations. Once the weight updates fall below the threshold specified by ``weight_tol`` (see :ref:`here <weight_tol_setting_label>` for details), the algorithm terminates. This convergence-based approach ensures the process continues until the clustering results have stabilized, while preventing unnecessary computation. A maximum limit of 10 iterations is maintained as a secondary safeguard (see :ref:`here <n_iter_setting_label>` for details on modifying this limit).
+To ensure efficient convergence, the algorithm monitors changes in feature weights across successive iterations. Once the weight updates fall below the threshold specified by ``weight_tol`` (see :ref:`here <weight_tol_setting_label>` for details), the algorithm stops. This convergence-based approach allows the process to continue until the clustering results have stabilized while avoiding unnecessary computation. A maximum of 10 iterations is maintained as a secondary safeguard (see :ref:`here <n_iter_setting_label>` for details on modifying this limit).
 
-DANT executes this iterative clustering multiple times --- before and after motion correction (see :ref:`iterative motion correction <iterative_motion_correction_label>` for details). After motion correction, the weight for waveform feature will increase in nearly all datasets, highlighting the improved reliability of motion-corrected waveforms in neuron tracking. 
+DANT runs this iterative clustering multiple times, both before and after motion correction (see :ref:`iterative motion correction <iterative_motion_correction_label>` for details), so the clustering can benefit from each improvement in alignment. After motion correction, the weight of the waveform feature increases in nearly all datasets, highlighting the improved reliability of motion-corrected waveforms for neuron tracking. 
 
 
 

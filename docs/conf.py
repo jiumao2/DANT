@@ -17,14 +17,9 @@ author = 'Yue Huang'
 
 extensions = [
     'sphinx.ext.autosectionlabel',
-    'sphinxcontrib.matlab',
     'sphinx.ext.autodoc']
 
-primary_domain = "mat"
-
-this_dir = os.path.dirname(os.path.abspath(__file__))
-matlab_src_dir = os.path.abspath(os.path.join(this_dir, '..'))
-matlab_short_links = True
+autosectionlabel_prefix_document = True
 
 
 templates_path = ['_templates']

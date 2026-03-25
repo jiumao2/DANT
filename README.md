@@ -18,12 +18,12 @@
 
 ## ⚙️ Installation
 
-DANT operates primarily in MATLAB but utilizes a lightweight Python environment to run the HDBSCAN clustering algorithm efficiently. 
+This section describes installation of the MATLAB version of DANT. DANT operates primarily in MATLAB but uses a lightweight Python environment to run the HDBSCAN clustering algorithm efficiently. 
 
 ### 1. Download DANT
 Clone or download the repository to your local machine:
 ```bash
-git clone [https://github.com/jiumao2/DANT.git](https://github.com/jiumao2/DANT.git)
+git clone https://github.com/jiumao2/DANT.git
 ```
 
 ### 2. MATLAB Prerequisites
@@ -33,26 +33,27 @@ Development is based on **MATLAB R2022b**. Ensure the following toolboxes are in
 * Parallel Computing Toolbox
 
 ### 3. Python Environment Setup
-DANT requires Python (3.9 – 3.11) with the `scikit-learn` and `hdbscan` packages. We highly recommend using Anaconda to manage this environment.
+DANT requires Python 3.9-3.11 with `scikit-learn` and `hdbscan` installed. We recommend using Anaconda to manage this environment.
 
-Open your Anaconda prompt or terminal and run:
+Open your Anaconda Prompt or terminal and run:
 
 ```bash
 conda create -n hdbscan python=3.10
 conda activate hdbscan
-pip install scikit-learn hdbscan
+pip install scikit-learn
+pip install hdbscan
 ```
 
 ### 4. Configure DANT
 Finally, link your new Python environment to DANT by updating the `settings.json` file in your DANT directory.
 
-Specify the absolute path to the Python executable in your `hdbscan` environment:
+Specify the Python executable path in `settings.json`:
 
 ```json
-"path_to_python": "C:\\path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe"
+"path_to_python": "path_to_anaconda\\anaconda3\\envs\\hdbscan\\python.exe"
 ```
 
-> **Note for Mac/Linux users:** Your path will typically look like `/Users/username/anaconda3/envs/hdbscan/bin/python`. You can easily find the exact path by running `conda info --envs` in your terminal.
+> **Note for macOS or Linux users:** Your path may look like `/Users/username/anaconda3/envs/hdbscan/bin/python`. You can find the exact path by running `conda info --envs` in the Anaconda Prompt.
 
 ## 🚀 Getting Started
 

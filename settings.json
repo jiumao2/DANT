@@ -44,7 +44,8 @@
             ["AutoCorr", "PETH"],
             ["Waveform", "AutoCorr", "PETH"],
             ["Waveform", "AutoCorr", "PETH"]
-        ] // features used for motion estimation each iteration. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        ], // features used for motion estimation each iteration. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        "stop_early": true // whether to terminate the motion estimation loop early if the number of matched unit pairs fails to increase
     },
 
     // parameters for clustering

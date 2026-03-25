@@ -28,12 +28,20 @@ features_all_motion_estimation = user_settings.motionEstimation.features;
 n_iter_motion_estimation = length(features_all_motion_estimation);
 
 % initialize waveform correction
-[waveforms_corrected, Motion] = initializeMotion( ...
+[waveforms_corrected, initial_Motion] = initializeMotion( ...
     user_settings,...
     waveforms_all,...
     sessions,...
     channel_locations,...
     locations);
+Motion = initial_Motion;
+
+% fetch stop_early setting safely
+if isfield(user_settings.motionEstimation, 'stop_early')
+    stop_early = user_settings.motionEstimation.stop_early;
+else
+    stop_early = false;
+end
 
 resultIter = struct();
 for i_iter = 1:n_iter_motion_estimation
@@ -51,16 +59,43 @@ for i_iter = 1:n_iter_motion_estimation
     [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, ~, weights, similarity_thres] = ...
         iterativeClustering(user_settings, path_DANT, similarity_matrix_all(:,:,idx_features), feature_names, idx_unit_pairs, sessions);
     
+    % count unique matched unit pairs
+    num_matches = nnz(triu(hdbscan_matrix, 1));
+    fprintf('[Iteration %d] Found %d matched unit pairs.\n', i_iter, num_matches);
+
+    % stop early if the new motion estimate yields fewer or equal matches
+    if stop_early && i_iter > 1 
+        if num_matches <= resultIter(i_iter-1).NumMatches
+            fprintf('[Iteration %d] Match number decreased or stagnated (%d to %d)! Motion correction ends now.\n',...
+                i_iter, resultIter(i_iter-1).NumMatches, num_matches);
+            
+            if i_iter == 2
+                % revert to initial baseline if the first correction failed
+                Motion = initial_Motion;
+                resultIter = struct([]); % Clear iteration history
+            else
+                % revert to the last successful motion state (two iterations ago)
+                Motion = resultIter(i_iter-2).Motion;
+                resultIter = resultIter(1:i_iter-2); 
+            end
+            
+            % recompute waveforms using the reverted optimal motion
+            waveforms_corrected = computeCorrectedWaveforms(user_settings, waveforms_all, channel_locations, sessions, locations, Motion);
+            break;
+        end
+    end
+
     % compute drift
     Motion = computeMotion(user_settings, similarity_matrix, hdbscan_matrix, idx_unit_pairs, similarity_thres, sessions, locations);
 
     % save the result from this iteration
     resultIter(i_iter).FeatureNames = feature_names;
     resultIter(i_iter).Weights = weights;
+    resultIter(i_iter).NumMatches = num_matches; 
     resultIter(i_iter).IdxClusters = idx_cluster_hdbscan;
     resultIter(i_iter).Motion = Motion;
 
-    % compute corrected waveforms and save to Waveforms.mat
+    % compute corrected waveforms
     waveforms_corrected = computeCorrectedWaveforms(user_settings, waveforms_all, channel_locations, sessions, locations, Motion);
 end
 

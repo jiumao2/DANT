@@ -60,7 +60,7 @@ Specify the Python executable path in `settings.json`:
 To help you get familiar with the pipeline, we have provided an example dataset and a step-by-step walkthrough.
 
 1. **Download the Data:** [Example Dataset for DANT (Figshare)](https://figshare.com/articles/dataset/Example_Dataset_for_DANT/30596258)
-2. **Run the Pipeline:** Follow our comprehensive [Tutorial](https://dant.readthedocs.io/en/latest/Tutorials.html) to run the example data or process your own recordings.
+2. **Run the Pipeline:** Follow our comprehensive [Tutorial](https://dant.readthedocs.io/en/latest/Tutorials_MATLAB.html) to run the example data or process your own recordings.
 
 If you encounter any bugs, have questions, or want to suggest a feature, please [open an issue](https://github.com/jiumao2/DANT/issues). We look forward to your feedback!
 

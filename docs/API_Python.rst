@@ -34,3 +34,10 @@ pyDANT.utils
 
 .. automodule:: pyDANT.utils
     :members:
+
+
+pyDANT.AutoCuration
+-------------------------------------
+
+.. automodule:: pyDANT.AutoCuration
+    :members:

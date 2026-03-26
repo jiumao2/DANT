@@ -10,12 +10,12 @@ Input
 ``spikeInfo.mat``
 +++++++++++++++++++
 
-See :ref:`prepare_the_data_label` for how to build it.
+See :ref:`prepare_the_data_matlab_label` for how to build it.
 
 ``settings.json``
 ++++++++++++++++++++
 
-See :ref:`prepare_the_data_label` for how to prepare it.
+See :ref:`prepare_the_data_matlab_label` for how to prepare it.
 
 See :doc:`Change_default_settings` for setting details.
 
@@ -26,7 +26,7 @@ Output
 ``Output.mat``
 ++++++++++++++++
 
-See :ref:`output_label` for details.
+See :ref:`output_matlab_label` for details.
 
 .. _motion_output_label:
 
@@ -55,7 +55,7 @@ See :ref:`Non-rigid correction <non_rigid_correction_label>` for details.
 ``Waveforms.mat``
 +++++++++++++++++++
 
-This file contains a variable named ``waveforms_corrected``, which is a n_unit x n_channel x n_sample 3D array. It stores the corrected waveforms for all units across all channels. 
+This file contains a variable named ``waveforms_corrected``, which is a n_unit x n_channel x n_sample x n_templates array. It stores the corrected waveform templates for all units across all channels.
 
 
 ``resultIter.mat``

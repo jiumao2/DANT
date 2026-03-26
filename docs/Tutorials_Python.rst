@@ -1,9 +1,15 @@
 Tutorials (Python)
 ==================
 
+Run the tutorial in Colab: |colab_badge|
+
+.. |colab_badge| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/jiumao2/pyDANT/blob/master/pyDANT_demo.ipynb
+   :alt: Run the tutorial in Colab
+
 This tutorial walks you through how to use the pyDANT package to track neurons across sessions. It is designed to help you prepare your data and run the code effectively. Before starting, make sure pyDANT is installed correctly. If you have not installed pyDANT yet, please refer to the :doc:`Installation <Installation>` section.
 
-.. _prepare_the_data_label:
+.. _prepare_the_data_python_label:
 
 Prepare the data
 -----------------------
@@ -23,7 +29,7 @@ To use pyDANT, organize your data in a folder with the following structure:
         ├── Unit0.npy
         ├── Unit1.npy
         ├── Unit2.npy
-        └── ...
+        ├── ...
         └── UnitN.npy
 
 - The data files should follow the formats below:
@@ -57,7 +63,7 @@ We recommend analyzing data from different brain regions (e.g., cortex and stria
         ├── Unit0.npy
         ├── Unit1.npy
         ├── Unit2.npy
-        └── ...
+        ├── ...
         └── UnitN.npy
 
 Edit the settings
@@ -68,7 +74,7 @@ To run pyDANT, edit the ``settings.json`` file in your data folder first. At a m
 .. code-block:: json
 
     {
-        "path_to_data": ".", // path to spikeInfo.mat
+        "path_to_data": ".", // path to the input data folder
         "output_folder": ".\\DANT_Output", // output folder
     }
 
@@ -78,7 +84,6 @@ If you do not want to use the PETH feature, remove it from both the ``motionEsti
 
     // parameters for motion estimation
     "motionEstimation":{
-        "max_distance": 100, // um. Unit pairs with distance larger than this value in Y direction will not be included for motion estimation
         "features": [
             ["Waveform", "AutoCorr"],
             ["Waveform", "AutoCorr"]
@@ -92,7 +97,7 @@ and
     // parameters for clustering
     "clustering":{
         "max_distance": 100, // um. Unit pairs with distance larger than this value in Y direction will be considered as different clusters
-        "features": ["Waveform", "AutoCorr"], // features used for motion estimation. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        "features": ["Waveform", "AutoCorr"], // features used for final clustering. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
         "n_iter": 10 // number of iterations for the clustering algorithm
     },
 
@@ -134,7 +139,7 @@ The tracking results should appear in the output folder specified in ``settings.
         └── Figures/
 
 
-.. _output_label:
+.. _output_python_label:
 
 Understand the output
 -----------------------

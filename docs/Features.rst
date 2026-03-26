@@ -51,7 +51,7 @@ Peri-event time histogram (PETH)
 The PETH feature is precomputed during data processing. It captures the functional properties of each unit as a vector. As shown in the figure, we combined three different PETHs (lever-press, lever-release, and poke; see the `paper <https://www.jneurosci.org/content/45/16/e1820242025>`_ for details about the task) to form the PETH feature vector. The PETH similarity score between unit :math:`i` and unit :math:`j` is
 
 .. math::
-    \mathbf{S}^{i,j}_{\text{PETH}} = \tanh^{-1}(\operatorname{corrcoef}(\text{PETH}_i, \text{PETH}_j).
+    \mathbf{S}^{i,j}_{\text{PETH}} = \tanh^{-1}(\operatorname{corrcoef}(\text{PETH}_i, \text{PETH}_j)).
 
 .. _Autocorrelogram_feature_label:
 

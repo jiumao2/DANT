@@ -3,7 +3,7 @@ Tutorials (MATLAB)
 
 This tutorial walks you through how to use the DANT package to track neurons across sessions. It is designed to help you prepare your data and run the code effectively. Before starting, make sure DANT is installed correctly. If you have not installed it yet, please refer to the :doc:`Installation <Installation>` section.
 
-.. _prepare_the_data_label:
+.. _prepare_the_data_matlab_label:
 
 Prepare the data
 -----------------------
@@ -119,7 +119,7 @@ Also edit ``mainDANT.m`` or ``mainDANT_MultiShank.m`` to specify the path to the
 .. code-block:: matlab
 
     % Set the path to DANT and settings
-    path_dant = '.\DANT'; % The path where DANT is installed
+    path_DANT = '.\DANT'; % The path where DANT is installed
     path_settings = '.\settings.json'; % Please make sure the settings in the file are accurate
 
 To learn more about the settings, please refer to the :doc:`Change default settings <Change_default_settings>` section. Careful tuning can help improve tracking results.
@@ -184,7 +184,7 @@ You may also want to inspect individual clusters more closely. Run the following
 This generates a figure like the one above, showing the corrected depth, corrected waveforms, autocorrelograms, and PETHs of the units in the selected cluster, color-coded by session. It also shows the similarity between units within the cluster. The figure will be saved to ``Figures/Clusters/Cluster<cluster_id>.png``. 
 
 
-.. _output_label:
+.. _output_matlab_label:
 
 Understand the output
 -----------------------
@@ -216,7 +216,7 @@ Field name                      Type                                        Expl
 ``SimilarityThreshold``         1 x 1 double                                threshold used to determine the good matches in `GoodMatchesMatrix`
 ``GoodMatchesMatrix``           n_unit x n_unit logical                     good matches determined by `SimilarityThreshold`
 ``SimilarityMatrix``            n_unit x n_unit double                      weighted sum of the similarity between each pair of units
-``Motion``                      1 x n_session double                        probe positions in each session
+``Motion``                      1 x 1 struct                                estimated motion parameters across sessions
 
 ``CurationPairs``               n_pairs x 2 int                             unit index for each pair of units that are curated
 ``CurationTypes``               1 x n_pairs int                             types of curation for each pair of units

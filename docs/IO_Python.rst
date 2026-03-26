@@ -10,12 +10,12 @@ Input
 Data
 +++++
 
-See how to prepare the data :ref:`here <prepare_the_data_label>`.
+See how to prepare the data :ref:`here <prepare_the_data_python_label>`.
 
 ``settings.json``
 +++++++++++++++++++++
 
-See how to prepare it :ref:`here <prepare_the_data_label>`.
+See how to prepare it :ref:`here <prepare_the_data_python_label>`.
 
 See how to adjust the settings :doc:`here <Change_default_settings>`.
 
@@ -84,7 +84,6 @@ Curation
 ++++++++++++
 
 The curation-related information will be saved in ``CurationTypeNames.npy``, ``CurationTypes.npy``, and ``CurationPairs.npy``. It stores the deleted unit pairs and why they are deleted (types). See :doc:`curation <Auto_curation>` for details.
-
 
 
 

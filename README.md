@@ -3,7 +3,11 @@
 [![View DANT on GitHub](https://img.shields.io/badge/GitHub-DANT-blue.svg)](https://github.com/jiumao2/DANT)
 [![Documentation Status](https://app.readthedocs.org/projects/dant/badge/)](https://dant.readthedocs.io/en/latest/)
 
-**DANT** is a MATLAB toolbox designed for the robust, longitudinal tracking of neurons across multiple recording sessions using high-density probes.
+<p align="center">
+  <img src="./Overview.png" alt="DANT graphical abstract" width="600">
+</p>
+
+**DANT** is a MATLAB toolbox that combines iterative motion correction and density-based clustering to robustly track single neurons across days of high-density recordings.
 
 ---
 

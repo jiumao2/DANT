@@ -4,13 +4,17 @@ Motion correction
 Why motion correction
 -------------------------
 
+.. image:: ./images/ProbeMotion.png
+   :width: 80%
+   :align: center
+
+In chronic Neuropixels recordings, the probe is not stationary relative to the brain even if the probe base is tightly fixed to the skull [1]_. Probe displacements can reach tens to hundreds of micrometers in recordings that span weeks. This movement greatly affects the waveforms recorded on each channel site (15-20 μm intervals along the probe). 
+
 .. image:: ./images/WaveformCorrection.png
    :width: 100%
    :align: center
 
 |
-
-In chronic Neuropixels recordings, the probe is not stationary relative to the brain even if the probe base is tightly fixed to the skull [1]_. Probe displacements can reach tens to hundreds of micrometers in recordings that span weeks. This movement greatly affects the waveforms recorded on each channel site (15-20 μm intervals along the probe). 
 
 In the above figure, the probe moves upward from day 1 to day m, while the recorded neuron remains in the same location relative to the brain (the triangles). This motion causes changes in spike waveforms at the corresponding channel sites. The probe positions relative to the brain are denoted as :math:`p_1` and :math:`p_m` on day 1 and day m. The unit locations relative to the probe tip are denoted as :math:`y_1` and :math:`y_m`, which can be computed from the waveform amplitudes on nearby channels. Therefore, the real probe motion :math:`\Delta p` (namely :math:`p_m - p_1`) can be estimated using the unit motion :math:`y_m - y_1`. Using the first-day probe, we can estimate the day-m waveforms on each channel site by :ref:`Kriging interpolation <waveform_correction_label>`. In this way, we can compare waveforms on the same probe rather than on moved probes. In channel-wise waveform correlation analysis, the corrected waveforms show a much higher correlation coefficient.
 

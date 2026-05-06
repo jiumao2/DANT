@@ -8,13 +8,11 @@ Now we have the tools to compute similarity between any two units (see :doc:`Fea
 
 Traditionally, researchers focused on finding matches between two sessions. That is essentially a binary classification problem: classify all unit pairs from two sessions into a "matched" class or an "unmatched" class. The selected features and classification method vary across different algorithms. However, that still does not solve the full tracking problem. In neuron tracking, we need to identify "chains" (made up of multiple units from different sessions), not just "matches" (made up of two units). Turning those pairwise matches into reliable chains remains an unsolved and challenging problem, and that is exactly the gap DANT is designed to address.
 
-.. image:: ./images/UMAP.png
+.. image:: ./images/ClusterUnits.png
    :width: 100%
    :align: center
 
-|
-
-Here, we approach the tracking problem from a different angle, and that shift in perspective makes the problem much more tractable. We formulate it as a clustering task, treating units from different sessions as points in a high-dimensional space, where units from the same neuron cluster together. The unsupervised UMAP projection visualizes all units in a 2D space (left panel). Our goal is then to group units from the same neuron with a suitable clustering algorithm (right panel, where the clustering result is color-coded). Common clustering algorithms such as k-means, Gaussian mixture models, and DBSCAN are not well suited to this task because the number of clusters is unknown, some neuron clusters are small and transient, and the data distribution is not Gaussian. This is exactly where HDBSCAN becomes useful, because it can handle the messy structure that neuron-tracking data naturally produce.
+Here, we approach the tracking problem from a different angle, and that shift in perspective makes the problem much more tractable. We formulate it as a clustering task, treating units from different sessions as points in a high-dimensional space, where units from the same neuron cluster together. The unsupervised UMAP projection visualizes all units in a 2D space (left panel). Our goal is then to group units from the same neuron with a suitable clustering algorithm. Common clustering algorithms such as k-means, Gaussian mixture models, and DBSCAN are not well suited to this task because the number of clusters is unknown, some neuron clusters are small and transient, and the data distribution is not Gaussian. This is exactly where HDBSCAN becomes useful, because it can handle the messy structure that neuron-tracking data naturally produce.
 
 
 .. _HDBSCAN_label:

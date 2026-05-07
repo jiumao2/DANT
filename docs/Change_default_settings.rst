@@ -16,6 +16,8 @@ The path to the ``spikeInfo.mat`` file.
 **pyDANT:**
 The path to the input data folder. This folder should contain files such as ``waveform_all.npy``, ``channel_locations.npy``, ``session_index.npy``, the ``spike_times`` folder, and optionally ``peth.npy``.
 
+For multi-shank pyDANT runs, this folder must also contain ``channel_shanks.npy``.
+
 ``output_folder``
 -------------------
 **DANT & pyDANT:**

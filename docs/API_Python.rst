@@ -41,3 +41,10 @@ pyDANT.AutoCuration
 
 .. automodule:: pyDANT.AutoCuration
     :members:
+
+
+pyDANT.Runner
+-------------------------------------
+
+.. automodule:: pyDANT.Runner
+    :members:

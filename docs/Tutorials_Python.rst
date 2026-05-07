@@ -4,10 +4,10 @@ Tutorials (Python)
 Run the tutorial in Colab: |colab_badge|
 
 .. |colab_badge| image:: https://colab.research.google.com/assets/colab-badge.svg
-   :target: https://colab.research.google.com/github/jiumao2/pyDANT/blob/master/pyDANT_demo.ipynb
+   :target: https://colab.research.google.com/github/jiumao2/pyDANT/blob/master/pyDANT_colab_demo.ipynb
    :alt: Run the tutorial in Colab
 
-This tutorial walks you through how to use the pyDANT package to track neurons across sessions. It is designed to help you prepare your data and run the code effectively. Before starting, make sure pyDANT is installed correctly. If you have not installed pyDANT yet, please refer to the :doc:`Installation <Installation>` section.
+This page describes the local pyDANT workflow. If you want to try pyDANT in a browser without local setup or pre-downloading data, use the Colab tutorial above. For local analysis, make sure pyDANT is installed correctly. If you have not installed pyDANT yet, please refer to the :doc:`Installation <Installation>` section.
 
 .. _prepare_the_data_python_label:
 
@@ -25,6 +25,7 @@ To use pyDANT, organize your data in a folder with the following structure:
     ├── waveform_all.npy
     ├── session_index.npy
     ├── peth.npy (optional)
+    ├── channel_shanks.npy (required for multi-shank data)
     └── spike_times/
         ├── Unit0.npy
         ├── Unit1.npy
@@ -40,25 +41,30 @@ Filename                       Shape                                   Explanati
 ``session_index.npy``          (n_unit,)                               indicates the session. It should start from 1 (for compatibility with MATLAB) and be continuous without any gaps.
 ``waveform_all.npy``           (n_unit, n_channel, n_sample)           the mean waveform of each unit in μV. All units must share the same set of channels                         
 ``channel_locations.npy``      (n_channel, 2)                          x and y coordinates of each channel in μm. The y coordinate typically represents depth
+``channel_shanks.npy``         (n_channel,)                            optional for single-shank data and required for multi-shank data. It stores the shank ID of each channel
 ``peth.npy``                   (n_unit, n_point)                       optional, peri-event time histogram for each unit
 ``spike_times/UnitX.npy``      (n_spike,)                              spike times in milliseconds
 ===========================    ======================================  =================================================
+
+For multi-shank probes, such as Neuropixels 2.0 probes with multiple shanks, provide ``channel_shanks.npy`` in the input data folder. During preprocessing, pyDANT generates ``unit_shanks.npy`` by assigning each unit to the shank of its peak channel.
 
 Crucially, the waveforms used in this analysis must not be whitened, unlike the waveforms processed by Kilosort. Avoid direct use of waveforms from ``temp_wh.dat`` and refrain from using ``whitening_mat_inv.npy`` or ``whitening_mat.npy`` from Kilosort2.5 / Kilosort3 to "unwhiten" data. These matrices do not correspond to Kilosort's original whitening process (see this `issue <https://github.com/cortex-lab/phy/issues/1040>`_).
 
 We recommend analyzing data from different brain regions (e.g., cortex and striatum) separately, as they may exhibit distinct drifts and neuronal properties. Please generate a separate data folder for each brain region.
 
-- Copy ``settings.json`` and ``mainDANT.py`` from the pyDANT package into your data folder. A typical layout is shown below:
+- Copy ``settings.json`` and ``mainDANT.py`` from the pyDANT package into your data folder. For multi-shank data, also copy ``mainDANT_MultiShank.py``. A typical layout is shown below:
 
 .. code-block::
 
     data_folder
     ├── settings.json
     ├── mainDANT.py
+    ├── mainDANT_MultiShank.py (for multi-shank data)
     ├── channel_locations.npy
     ├── waveform_all.npy
     ├── session_index.npy
     ├── peth.npy (optional)
+    ├── channel_shanks.npy (required for multi-shank data)
     └── spike_times/
         ├── Unit0.npy
         ├── Unit1.npy
@@ -118,6 +124,14 @@ Run ``mainDANT.py`` in your Python environment from the terminal or command prom
 
     python mainDANT.py
 
+For multi-shank data, run ``mainDANT_MultiShank.py`` instead:
+
+.. code-block::
+
+    python mainDANT_MultiShank.py
+
+The multi-shank entry point calls ``runDANTMultiShank(user_settings)``. It processes each shank separately and then merges the per-shank results into the root output folder.
+
 
 The tracking results should appear in the output folder specified in ``settings.json``. A typical output layout looks like this:
 
@@ -126,10 +140,12 @@ The tracking results should appear in the output folder specified in ``settings.
     data_folder
     ├── settings.json
     ├── mainDANT.py
+    ├── mainDANT_MultiShank.py (for multi-shank data)
     ├── channel_locations.npy
     ├── waveform_all.npy
     ├── session_index.npy
     ├── peth.npy (optional)
+    ├── channel_shanks.npy (required for multi-shank data)
     ├── spike_times/
     └── DANT_Output/
         ├── IdxCluster.npy
@@ -137,6 +153,9 @@ The tracking results should appear in the output folder specified in ``settings.
         ├── SimilarityMatrix.npy
         ├── ...
         └── Figures/
+
+For multi-shank runs, the root output folder also contains ``unit_shanks.npy`` and merged global outputs such as ``Output.npz``, ``ClusteringResults.npz``, ``ClusterMatrix.npy``, ``IdxCluster.npy``, ``MatchedPairs.npy``, the similarity matrices, and ``waveforms_corrected.npy``. The merged ``Output.npz`` includes ``IdxUnit`` and ``IdxShank`` fields. Complete per-shank outputs are saved under ``Shank<ID>/`` subfolders.
+
 
 
 .. _output_python_label:

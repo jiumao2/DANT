@@ -1,5 +1,5 @@
 function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
-    user_settings, waveforms_all, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs)
+    user_settings, waveforms_all, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs, channel_shanks)
 % COMPUTEALLSIMILARITYMATRIX  Compute and visualize similarity matrices across multiple features.
 %
 % This function computes pairwise similarity matrices for waveform, ISI, autocorrelation, 
@@ -33,6 +33,10 @@ function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix
 %   idx_unit_pairs              integer matrix (P × 2)  
 %       Each row contains a pair of unit indices for which to plot similarity histograms  
 %
+%   channel_shanks              double array (C x 1), optional
+%       Shank ID assignment for each recording channel. If not provided,
+%       waveform similarity assumes all channels are on one shank.
+%
 % Outputs:
 %   similarity_matrix_all       double array (n_unit × n_unit × M)  
 %       Stack of M similarity matrices, one per feature in feature_names_all  
@@ -48,7 +52,11 @@ max_similarity = 6; % r = 0.999987
 
 waveform_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'Waveform'))
-    waveform_similarity_matrix = computeWaveformSimilarityMatrix(user_settings, waveforms_all, channel_locations);
+    if nargin < 9
+        waveform_similarity_matrix = computeWaveformSimilarityMatrix(user_settings, waveforms_all, channel_locations);
+    else
+        waveform_similarity_matrix = computeWaveformSimilarityMatrix(user_settings, waveforms_all, channel_locations, channel_shanks);
+    end
 end
 waveform_similarity_matrix(waveform_similarity_matrix > max_similarity) = max_similarity;
 

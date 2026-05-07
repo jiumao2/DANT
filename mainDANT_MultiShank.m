@@ -47,6 +47,7 @@ for i_shank = 1:length(shankIDs)
     % get necessary information
     sessions = [spikeInfoShank.SessionIndex];
     channel_locations = [spikeInfoShank(1).Xcoords, spikeInfoShank(1).Ycoords];
+    channel_shanks = spikeInfoShank(1).Kcoords(:);
     locations = cat(1, spikeInfoShank.Location);
     [ISI_features, AutoCorr_features, PETH_features] = getAllFeatures(spikeInfoShank);
     waveforms_all = cat(3, spikeInfoShank.Waveform);
@@ -74,7 +75,7 @@ for i_shank = 1:length(shankIDs)
         % compute similarity matrix 
         feature_names = features_all_motion_estimation{i_iter}';
         [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
-            user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs);
+            user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs, channel_shanks);
     
         % iterative HDBSCAN
         idx_features = cellfun(@(x)find(strcmpi(feature_names_all, x)), feature_names);
@@ -131,7 +132,7 @@ for i_shank = 1:length(shankIDs)
     
     % compute similarity matrix
     [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
-        user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs);
+        user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs, channel_shanks);
     
     % iterative HDBSCAN
     feature_names = user_settings.clustering.features';

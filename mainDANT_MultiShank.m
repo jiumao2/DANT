@@ -54,8 +54,7 @@ for i_shank = 1:length(shankIDs)
     waveforms_all = permute(waveforms_all, [3,1,2]);
     
     % motion estimation
-    features_all_motion_estimation = user_settings.motionEstimation.features;
-    n_iter_motion_estimation = length(features_all_motion_estimation);
+    [features_all_motion_estimation, n_iter_motion_estimation] = getMotionFeatureSets(user_settings);
    
     % initialize waveform correction
     [waveforms_corrected, initial_Motion] = initializeMotion( ...
@@ -73,7 +72,8 @@ for i_shank = 1:length(shankIDs)
         idx_unit_pairs = getNearbyPairs(max_distance, sessions, locations, Motion);
         
         % compute similarity matrix 
-        feature_names = features_all_motion_estimation{i_iter}';
+        idx_feature_set = min(i_iter, length(features_all_motion_estimation));
+        feature_names = features_all_motion_estimation{idx_feature_set}';
         [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
             user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs, channel_shanks);
     

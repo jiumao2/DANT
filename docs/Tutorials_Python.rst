@@ -91,9 +91,11 @@ If you do not want to use the PETH feature, remove it from both the ``motionEsti
     // parameters for motion estimation
     "motionEstimation":{
         "features": [
-            ["Waveform", "AutoCorr"],
             ["Waveform", "AutoCorr"]
-        ] // features used for motion estimation each iteration. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        ], // features used for motion estimation each iteration. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        "max_iter": 15, // maximum number of motion estimation iterations
+        "repeat_last_feature_set": true, // whether to keep reusing the last feature set until stop_early triggers or max_iter is reached
+        "stop_early": true // whether to terminate the motion estimation loop early if the number of matched unit pairs fails to increase
     },
 
 and 

@@ -21,7 +21,9 @@ This function creates output and figure folders, checks session index continuity
 - ``user_settings.spikeLocation.n_nearest_channels``: double scalar. Number of channels for localization.
 - ``user_settings.spikeLocation.location_algorithm``: char. ``center_of_mass`` or ``monopolar_triangulation``.
 - ``user_settings.centering_waveforms``: logical scalar. Flag to realign waveforms around the trough.
-- ``user_settings.motionEstimation.features``: cell array of char. Features for motion estimation.
+- ``user_settings.motionEstimation.features``: cell array of feature-set cell arrays. Features used for each scheduled motion-estimation round.
+- ``user_settings.motionEstimation.max_iter``: optional double scalar. Maximum number of motion-estimation iterations.
+- ``user_settings.motionEstimation.repeat_last_feature_set``: optional logical scalar. Whether to reuse the final motion-estimation feature set after the explicit schedule is exhausted.
 - ``user_settings.clustering.features``: cell array of char. Features for clustering.
 - ``user_settings.autoCorr.window``: double scalar in ms. Half-width of the autocorrelogram window.
 - ``user_settings.autoCorr.binwidth``: double scalar in ms. Bin size for the autocorrelogram.

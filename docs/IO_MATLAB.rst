@@ -61,7 +61,7 @@ This file contains a variable named ``waveforms_corrected``, which is a n_unit x
 ``resultIter.mat``
 ++++++++++++++++++++
 
-This file contains a variable named ``resultIter``, which is a 1 x ``n_iter`` struct array. ``n_iter`` is the number of motion-correction iterations. It stores the information for each iteration of motion correction. The fields are listed below:
+This file contains a variable named ``resultIter``, which is a 1 x ``n_iter`` struct array. ``n_iter`` is the number of accepted motion-correction iterations saved before the loop finished. If early stopping rejects a new motion estimate, that rejected iteration is not kept in ``resultIter``. The fields are listed below:
 
 ===========================     =============================               =================
 Field name                      Type                                        Explanation  

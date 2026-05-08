@@ -98,9 +98,11 @@ If you do not want to use the PETH feature, remove it from both the ``motionEsti
     "motionEstimation":{
         "max_distance": 100, // um. Unit pairs with distance larger than this value in Y direction will not be included for motion estimation
         "features": [
-            ["Waveform", "AutoCorr"],
             ["Waveform", "AutoCorr"]
-        ] // features used for motion estimation each iteration. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        ], // features used for motion estimation each iteration. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        "max_iter": 15, // maximum number of motion estimation iterations
+        "repeat_last_feature_set": true, // whether to keep reusing the last feature set until stop_early triggers or max_iter is reached
+        "stop_early": true // whether to terminate the motion estimation loop early if the number of matched unit pairs fails to increase
     },
 
 and 
@@ -110,7 +112,7 @@ and
     // parameters for clustering
     "clustering":{
         "max_distance": 100, // um. Unit pairs with distance larger than this value in Y direction will be considered as different clusters
-        "features": ["Waveform", "AutoCorr"], // features used for motion estimation. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        "features": ["Waveform", "AutoCorr"], // features used for final clustering. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
         "n_iter": 10 // number of iterations for the clustering algorithm
     },
 

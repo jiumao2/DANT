@@ -230,12 +230,30 @@ Default:
 .. code-block:: json
 
     [
-        ["Waveform", "AutoCorr", "PETH"],
+        ["AutoCorr", "PETH"],
         ["Waveform", "AutoCorr", "PETH"]
     ]
 
 **DANT & pyDANT:**
-The features used for motion estimation in each iteration. With the default values, motion estimation will be performed multiple times using the listed feature sets. The features should be chosen from ``"Waveform"``, ``"AutoCorr"``, ``"ISI"``, or ``"PETH"``. In some datasets with large probe motion (> 100 μm), the waveform feature may not be reliable, and you can use ``"AutoCorr"`` and ``"PETH"`` in the first iteration.
+The features used for motion estimation in each iteration. The features should be chosen from ``"Waveform"``, ``"AutoCorr"``, ``"ISI"``, or ``"PETH"``. In some datasets with large probe motion, the waveform feature may not be reliable, and you can use ``"AutoCorr"`` and ``"PETH"`` in the first iteration. If ``PETH`` is not available, do not use ``"AutoCorr"`` alone for the first iteration; use ``["Waveform", "AutoCorr"]`` instead.
+
+``motionEstimation.max_iter``
++++++++++++++++++++++++++++++++++++
+
+
+Default: ``15``
+
+**DANT & pyDANT:**
+The maximum number of motion estimation iterations. This is a hard upper bound, not a requirement to run exactly this many iterations. If ``repeat_last_feature_set`` is ``false``, the pipeline runs at most the number of feature sets listed in ``motionEstimation.features``.
+
+``motionEstimation.repeat_last_feature_set``
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+Default: ``true``
+
+**DANT & pyDANT:**
+Whether to keep reusing the last listed motion-estimation feature set after the explicit feature schedule is exhausted. If this is ``true``, the pipeline can continue until ``stop_early`` triggers or ``max_iter`` is reached. The default settings set this field to ``true``; older settings files without this field keep legacy behavior and behave as if it were ``false``.
 
 ``motionEstimation.stop_early``
 +++++++++++++++++++++++++++++++

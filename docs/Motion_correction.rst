@@ -147,7 +147,7 @@ Iterative motion correction
 
 In many cases, a single round of motion correction is insufficient to fully resolve probe drift, particularly when the initial match count is low or when large physical displacements render spatial features such as waveforms temporarily unreliable. To address this, DANT employs an iterative refinement strategy in which the pipeline gradually improves alignment over multiple rounds, thereby revealing more unit matches and enabling increasingly precise drift correction.
 
-The feature sets for these iterations are defined in ``settings.json`` as an array of arrays. A robust configuration typically begins with an initial round that uses only temporal features, such as ``AutoCorr`` and ``PETH``, to build a stable baseline. By excluding waveforms in the first round, the system obtains a stable initial estimate that is less sensitive to spatial misalignment. In subsequent rounds, the introduction of waveforms allows the clustering algorithm to identify more matched pairs as the alignment improves. For datasets with small drifts, or when a strong ``PETH`` feature is unavailable, users may choose to include ``Waveform`` features in all rounds.
+The feature sets for these iterations are defined in ``settings.json`` as an array of arrays. A robust configuration typically begins with an initial round that uses only temporal features, such as ``AutoCorr`` and ``PETH``, to build a stable baseline. By excluding waveforms in the first round, the system obtains a stable initial estimate that is less sensitive to spatial misalignment. In subsequent rounds, the introduction of waveforms allows the clustering algorithm to identify more matched pairs as the alignment improves. For datasets with small drifts, or when a strong ``PETH`` feature is unavailable, users may choose to include ``Waveform`` features in all rounds. If ``PETH`` is not available, using only ``AutoCorr`` for the first round is usually too weak; in that case, start with ``Waveform`` and ``AutoCorr`` together.
 
 An example configuration utilizing an initial temporal-only round followed by waveform-based refinement is as follows:
 
@@ -155,20 +155,13 @@ An example configuration utilizing an initial temporal-only round followed by wa
 
     "features": [
         ["AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
-        ["Waveform", "AutoCorr", "PETH"],
         ["Waveform", "AutoCorr", "PETH"]
     ],
+    "max_iter": 15,
+    "repeat_last_feature_set": true,
     "stop_early": true
 
-The good news is that users do not need to manually determine the exact number of iterations required for a given dataset. By repeating the feature set, for example 10 times, and setting the ``stop_early`` parameter to ``true``, the pipeline automatically monitors the match count after each iteration. If a new motion estimate fails to increase the number of matched unit pairs relative to the previous state, the process terminates immediately and reverts to the last optimal result. This early-stopping mechanism helps maintain stable tracking, prevents overfitting, and reduces computation time by exiting as soon as convergence is reached.
+The good news is that users do not need to manually repeat the final feature set to set up automatic convergence. When ``repeat_last_feature_set`` is ``true``, DANT reuses the last listed feature set until ``stop_early`` terminates the loop or ``max_iter`` is reached. The pipeline monitors the match count after each iteration. If a new motion estimate fails to increase the number of matched unit pairs relative to the previous state, the process terminates immediately and reverts to the last optimal result. This early-stopping mechanism helps maintain stable tracking, prevents overfitting, and reduces computation time by exiting as soon as convergence is reached.
 
 See :ref:`Change default settings <motion_correction_features_label>` for details on modifying these parameters in your specific configuration file.
 

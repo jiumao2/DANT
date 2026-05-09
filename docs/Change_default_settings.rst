@@ -124,10 +124,10 @@ Please refer to the :ref:`Non-rigid correction <non_rigid_correction_label>` sec
 +++++++++++++++++++++++++++++++++++
 
 
-Default: ``1``
+Default: ``2``
 
 **DANT & pyDANT:**
-The number of templates (reference probes) used for waveform correction. It should be 1 or 2. If set to 1, the template is set at the mean of motion; if set to 2, two templates are set at the top and bottom of the probe. If set to 2, waveform correction and waveform similarity calculation will be performed twice, which is more accurate but slower. It is recommended to use 2 for datasets with large probe motion and many units located at the edges of the probe. See :ref:`Waveform correction <waveform_correction_label>` for more details about this parameter.
+The number of templates (reference probes) used for waveform correction. It should be 1 or 2. If set to 1, the template is set at the mean of motion; if set to 2, two templates are set at the top and bottom of the probe. The default value of 2 is recommended for robust tracking, especially for datasets with large probe motion or many units located at the edges of the probe. Because waveform correction and waveform similarity calculation are performed for both templates, this setting is more accurate but slower than using a single template. See :ref:`Waveform correction <waveform_correction_label>` for more details about this parameter.
 
 .. _path_to_motion_label:
 

@@ -90,17 +90,17 @@ for iter = 1:user_settings.clustering.n_iter
     distance_matrix = 1./(1 + tanh(similarity_matrix));
     distance_matrix(eye(size(distance_matrix)) == 1) = 0;
     
-    HDBSCAB_settings.min_samples = 1; % The number of samples in a neighborhood for a point to be considered as a core point.
+    HDBSCAN_settings.min_samples = 1; % The number of samples in a neighborhood for a point to be considered as a core point.
     % This includes the point itself. When None, defaults to min_cluster_size.
-    HDBSCAB_settings.cluster_selection_epsilon = 0; % A distance threshold. 
+    HDBSCAN_settings.cluster_selection_epsilon = 0; % A distance threshold. 
     % Clusters below this value will be merged. This is the minimum epsilon allowed.
     
-    HDBSCAB_settings.min_cluster_size = 2;
-    HDBSCAB_settings.max_cluster_size = n_session;
-    HDBSCAB_settings.metric = 'precomputed';
-    HDBSCAB_settings.data_folder = user_settings.output_folder;
+    HDBSCAN_settings.min_cluster_size = 2;
+    HDBSCAN_settings.max_cluster_size = n_session;
+    HDBSCAN_settings.metric = 'precomputed';
+    HDBSCAN_settings.data_folder = user_settings.output_folder;
     
-    json_text = jsonencode(HDBSCAB_settings);
+    json_text = jsonencode(HDBSCAN_settings);
     
     fid = fopen(fullfile(user_settings.output_folder, 'HDBSCAN_settings.json'), 'w');
     fwrite(fid, json_text);

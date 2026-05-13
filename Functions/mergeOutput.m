@@ -147,7 +147,7 @@ Output.NumClusters = n_cluster;
 
 % Save the combined output
 fprintf('Saving Output to %s ...\n', fullfile(output_folder, 'Output.mat'));
-save(fullfile(output_folder, 'Output.mat'), 'Output', '-nocompression');
-save(fullfile(output_folder, 'Waveforms.mat'), 'waveforms_corrected', '-nocompression');
+save(fullfile(output_folder, 'Output.mat'), 'Output', '-nocompression', '-v7.3');
+save(fullfile(output_folder, 'Waveforms.mat'), 'waveforms_corrected', '-nocompression', '-v7.3');
 
 end

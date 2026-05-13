@@ -123,7 +123,7 @@ for i_shank = 1:length(shankIDs)
     end
 
     % save the intermediate result
-    save(fullfile(user_settings.output_folder, 'resultIter.mat'), 'resultIter', '-nocompression');
+    save(fullfile(user_settings.output_folder, 'resultIter.mat'), 'resultIter', '-nocompression', '-v7.3');
     
     % final clustering
     % find nearby pairs
@@ -154,11 +154,11 @@ for i_shank = 1:length(shankIDs)
 
     % save the corrected waveforms
     save(fullfile(user_settings.output_folder, 'Waveforms.mat'),...
-        'waveforms_corrected', '-nocompression');
+        'waveforms_corrected', '-nocompression', '-v7.3');
 
     % save the similarity matrix
     if user_settings.save_intermediate_results
-        save(fullfile(user_settings.output_folder, 'SimilarityMatrix.mat'), 'similarity_matrix_all', 'feature_names_all', '-nocompression');
+        save(fullfile(user_settings.output_folder, 'SimilarityMatrix.mat'), 'similarity_matrix_all', 'feature_names_all', '-nocompression', '-v7.3');
     end
     
     % plot the result

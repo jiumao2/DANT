@@ -144,7 +144,7 @@ end
 Output.RunTime = toc(tic_start);
 Output.DateTime = datestr(datetime('now'));
 
-save(fullfile(user_settings.output_folder, 'Output.mat'), 'Output', '-nocompression');
+save(fullfile(user_settings.output_folder, 'Output.mat'), 'Output', '-nocompression', '-v7.3');
 fprintf('DANT done! Output is saved to %s!\n', fullfile(user_settings.output_folder, 'Output.mat'));
 fprintf('Found %d clusters and %d matches from %d units during %d sessions!\n',...
     Output.NumClusters, size(Output.MatchedPairs, 1), Output.NumUnits, Output.NumSession);

@@ -295,7 +295,7 @@ end
 
 % save data
 if user_settings.save_intermediate_results
-    save(fullfile(user_settings.output_folder, 'Motion.mat'), 'Motion', '-nocompression');
+    save(fullfile(user_settings.output_folder, 'Motion.mat'), 'Motion', '-nocompression', '-v7.3');
 end
 
 end

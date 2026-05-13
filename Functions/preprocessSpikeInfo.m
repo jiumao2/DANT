@@ -95,12 +95,18 @@ else
     is_parallel = false;
 end
 
-if is_parallel && isempty(gcp('nocreate'))
-    c = parcluster('local');
-    if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs == -1
-        parpool(c.NumWorkers);
-    else
-        parpool(user_settings.n_jobs);
+if is_parallel
+    pool = gcp('nocreate');
+    if isempty(pool) || contains(class(pool), 'ThreadPool')
+        if ~isempty(pool)
+            delete(pool);
+        end
+        c = parcluster('local');
+        if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs == -1
+            parpool('Processes', c.NumWorkers);
+        else
+            parpool('Processes', user_settings.n_jobs);
+        end
     end
 end
 disp('Start preprocessing spikeInfo!');

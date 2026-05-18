@@ -109,11 +109,25 @@ for iter = 1:user_settings.clustering.n_iter
     writeNPY(distance_matrix, fullfile(user_settings.output_folder, 'DistanceMatrix.npy'));
     
     % run HDBSCAN with Python
-    system([fullfile(user_settings.path_to_python), ' ',...
-        fullfile(path_DANT, 'Functions/main_hdbscan.py'), ' ',...
-        fullfile(user_settings.output_folder, 'HDBSCAN_settings.json')]);
+    cluster_file = fullfile(user_settings.output_folder, 'ClusterIndices.npy');
+    linkage_file = fullfile(user_settings.output_folder, 'LinkageMatrix.npy');
+    settings_file = fullfile(user_settings.output_folder, 'HDBSCAN_settings.json');
+    script_file = fullfile(path_DANT, 'Functions', 'main_hdbscan.py');
+
+    if isfile(cluster_file), delete(cluster_file); end
+    if isfile(linkage_file), delete(linkage_file); end
+
+    cmd = sprintf('"%s" "%s" "%s"', user_settings.path_to_python, script_file, settings_file);
+    [status, cmdout] = system(cmd);
+    if status ~= 0
+        error('DANT:HDBSCANFailed', 'HDBSCAN Python call failed:\n%s\nCommand:\n%s', cmdout, cmd);
+    end
+
+    if ~isfile(cluster_file) || ~isfile(linkage_file)
+        error('DANT:HDBSCANMissingOutput', 'HDBSCAN did not generate expected output files.');
+    end
     
-    idx_cluster_hdbscan = double(readNPY(fullfile(user_settings.output_folder, 'ClusterIndices.npy')));
+    idx_cluster_hdbscan = double(readNPY(cluster_file));
     % MATLAB starts from 1
     idx_cluster_hdbscan(idx_cluster_hdbscan >= 0) = idx_cluster_hdbscan(idx_cluster_hdbscan >= 0)+1;
     
@@ -163,7 +177,7 @@ if nargout >= 6
 end
 
 if nargout >= 8
-    Z = double(readNPY(fullfile(user_settings.output_folder, 'LinkageMatrix.npy')));
+    Z = double(readNPY(linkage_file));
     leafOrder = optimalleaforder(Z, distance_matrix);
 end
 

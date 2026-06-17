@@ -11,8 +11,8 @@
 
 ---
 
-### 📄 Preprint
-**[Density-based longitudinal neuron tracking in high-density electrophysiological recordings](https://www.biorxiv.org/content/10.64898/2025.12.19.695632v1)**
+### 📄 Published article
+**[Density-based longitudinal neuron tracking in high-density electrophysiological recordings](https://doi.org/10.1016/j.patter.2026.101590)**
 
 📚 **[Read the Documentation](https://dant.readthedocs.io/en/latest/)**
 
@@ -31,7 +31,7 @@ git clone https://github.com/jiumao2/DANT.git
 ```
 
 ### 2. MATLAB Prerequisites
-Development is based on **MATLAB R2022b**. Ensure the following toolboxes are installed in your MATLAB environment:
+Ensure the following toolboxes are installed in your MATLAB environment:
 * Statistics and Machine Learning Toolbox
 * Optimization Toolbox
 * Parallel Computing Toolbox
@@ -70,17 +70,17 @@ If you encounter any bugs, have questions, or want to suggest a feature, please 
 
 ## 📝 Citation
 
-If you use DANT in your research, please cite our preprint:
+If you use DANT in your research, please cite our article:
 
 ```bibtex
-@article {Huang2025DANT,
+@article{Huang2026DANT,
     author = {Huang, Yue and Wang, Hanbo and Cao, Jiaming and Chen, Yu and Wang, Xuanning and Zhao, Yujie and Ren, Hengkun and Zheng, Qiang and Yu, Jianing},
     title = {Density-based longitudinal neuron tracking in high-density electrophysiological recordings},
-    year = {2025},
-    doi = {10.64898/2025.12.19.695632},
-    publisher = {Cold Spring Harbor Laboratory},
-    URL = {https://www.biorxiv.org/content/early/2025/12/23/2025.12.19.695632},
-    journal = {bioRxiv}
+    journal = {Patterns},
+    year = {2026},
+    doi = {10.1016/j.patter.2026.101590},
+    url = {https://doi.org/10.1016/j.patter.2026.101590},
+    note = {Available online 17 June 2026}
 }
 ```
 

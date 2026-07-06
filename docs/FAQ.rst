@@ -11,7 +11,7 @@ How do I manually set motion?
 
 DANT and pyDANT can use a user-provided probe motion file instead of starting motion correction from zero. This is useful when you want to provide your own motion estimate, either from another method or from manual inspection and correction of a DANT result that is clearly wrong.
 
-A typical manual workflow is to run DANT once, inspect ``Figures/Overview.png`` together with ``Output.Motion`` or ``Motion.mat``, manually adjust the motion values when the estimated motion is clearly wrong, save the adjusted motion as ``motion.npy``, set ``waveformCorrection.path_to_motion``, and rerun with ``"Waveform"`` included in the first motion-correction feature set.
+A typical manual workflow is to run DANT once, inspect ``Figures/Overview.png`` together with ``Output.Motion``, manually adjust the motion values when the estimated motion is clearly wrong, save the adjusted motion as ``motion.npy``, set ``waveformCorrection.path_to_motion``, and rerun with ``"Waveform"`` included in the first motion-correction feature set.
 
 Prepare a NumPy ``.npy`` file, for example ``motion.npy``. Motion values should be in μm, and the order must match session indices ``1, 2, ..., n_session``.
 

@@ -59,7 +59,7 @@ Probe motion across recording sessions was estimated using matched unit pairs (i
 
 This minimizes the discrepancy between the relative displacements of matched units and the inferred probe motion across sessions. The optimization was performed using MATLAB's ``fminunc``, and mean-subtracted probe positions (:math:`\boldsymbol{p}^* - \text{mean}(\boldsymbol{p}^*)`) were used for waveform correction to center displacements around a common reference. 
 
-DANT also lets you plug in precomputed motion estimates via a ``.npy`` file (see :ref:`here <path_to_motion_label>` for more details). For example, rigid motion estimates derived from other algorithms such as DREDge can be applied directly during waveform correction.
+DANT also lets you plug in user-provided motion estimates via a ``.npy`` file (see :ref:`here <path_to_motion_label>` and :ref:`Manually setting motion <manual_motion_label>` for more details). For example, you can use motion from another algorithm or manually correct a clearly wrong DANT motion estimate and apply it directly during waveform correction.
 
 .. _waveform_correction_label:
 
@@ -148,6 +148,8 @@ Iterative motion correction
 In many cases, a single round of motion correction is insufficient to fully resolve probe drift, particularly when the initial match count is low or when large physical displacements render spatial features such as waveforms temporarily unreliable. To address this, DANT employs an iterative refinement strategy in which the pipeline gradually improves alignment over multiple rounds, thereby revealing more unit matches and enabling increasingly precise drift correction.
 
 The feature sets for these iterations are defined in ``settings.json`` as an array of arrays. A robust configuration typically begins with an initial round that uses only temporal features, such as ``AutoCorr`` and ``PETH``, to build a stable baseline. By excluding waveforms in the first round, the system obtains a stable initial estimate that is less sensitive to spatial misalignment. In subsequent rounds, the introduction of waveforms allows the clustering algorithm to identify more matched pairs as the alignment improves. For datasets with small drifts, or when a strong ``PETH`` feature is unavailable, users may choose to include ``Waveform`` features in all rounds. If ``PETH`` is not available, using only ``AutoCorr`` for the first round is usually too weak; in that case, start with ``Waveform`` and ``AutoCorr`` together.
+
+Manual motion is the exception to this temporal-only first-round recommendation. If ``waveformCorrection.path_to_motion`` is set, the first motion-correction feature set must include ``Waveform`` because the manually provided motion is applied through waveform correction.
 
 An example configuration utilizing an initial temporal-only round followed by waveform-based refinement is as follows:
 

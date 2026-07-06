@@ -4,13 +4,16 @@ function [waveforms_corrected, Motion] = initializeMotion(user_settings, wavefor
 %
 % Loads session-wise motion values from a user-specified .npy file and applies
 % them to correct unit waveforms. If no motion file is provided, raw waveforms
-% are returned unchanged. The function constructs a Motion struct with
-% constant offsets assuming rigid motion.s
+% are returned unchanged. A one-dimensional motion file is interpreted as rigid
+% motion. A two-row motion file is interpreted as linear and constant terms.
 %
 % Inputs:
 %   user_settings           struct
 %       .waveformCorrection.path_to_motion   char or string
-%           Path to pre-computed motion .npy file (one value per session).
+%           Path to pre-computed motion .npy file. Valid shapes are
+%           n_session, 1 x n_session, n_session x 1, 2 x n_session, or
+%           n_session x 2. Two-row files store Linear in row 1 and Constant
+%           in row 2.
 %
 %   waveforms_all           double (n_unit × n_channel × n_sample)  
 %       Raw waveform snippets for each unit, across channels and time samples
@@ -46,6 +49,19 @@ Motion = struct('Linear', zeros(1, n_session), 'Constant', zeros(1, n_session), 
 if ~isfield(user_settings.waveformCorrection, 'path_to_motion') || isempty(user_settings.waveformCorrection.path_to_motion)
     waveforms_corrected = waveforms_all;
     return
+end
+
+features_all_motion_estimation = user_settings.motionEstimation.features;
+first_feature_set = features_all_motion_estimation;
+if iscell(features_all_motion_estimation) && ~isempty(features_all_motion_estimation) && ...
+        iscell(features_all_motion_estimation{1})
+    first_feature_set = features_all_motion_estimation{1};
+end
+
+if ~any(strcmpi(first_feature_set, 'Waveform'))
+    error(['When waveformCorrection.path_to_motion is set, the first motionEstimation.features ', ...
+        'entry must include "Waveform"; otherwise the manually provided motion is not used ', ...
+        'during the first motion-correction clustering round.']);
 end
 
 if ~isfile(user_settings.waveformCorrection.path_to_motion)

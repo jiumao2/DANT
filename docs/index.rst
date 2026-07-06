@@ -26,6 +26,7 @@ Welcome to DANT's documentation!
    Clustering <Clustering>
 
    Auto curation <Auto_curation>
+   FAQ <FAQ>
    
    Input and output (IO) <IO>
    API <API>

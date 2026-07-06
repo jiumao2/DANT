@@ -187,12 +187,13 @@ Motion Correction
 
 Initialize motion correction from pre-computed drift estimates.
 
-This function loads session-wise motion values from a user-specified ``.npy`` file and applies them to correct unit waveforms. If no motion file is provided, raw waveforms are returned unchanged. The function constructs a ``Motion`` struct with constant offsets assuming rigid motion.
+This function loads session-wise motion values from a user-specified ``.npy`` file and applies them to correct unit waveforms. If no motion file is provided, raw waveforms are returned unchanged. One-dimensional motion files are treated as rigid motion. Two-row motion files are treated as non-rigid motion, with the first row stored in ``Motion.Linear`` and the second row stored in ``Motion.Constant``.
 
 **Inputs**
 
 - ``user_settings``: struct.
-- ``user_settings.waveformCorrection.path_to_motion``: char or string. Path to a pre-computed motion ``.npy`` file, one value per session.
+- ``user_settings.waveformCorrection.path_to_motion``: char or string. Path to a pre-computed motion ``.npy`` file. Valid shapes are ``n_session``, ``1 x n_session``, ``n_session x 1``, ``2 x n_session``, or ``n_session x 2``.
+- ``user_settings.motionEstimation.features``: cell array. If ``path_to_motion`` is set, the first feature set must include ``Waveform``.
 - ``waveforms_all``: double ``(n_unit x n_channel x n_sample)``. Raw waveform snippets for each unit.
 - ``sessions``: integer vector. Session index for each unit.
 - ``channel_locations``: double ``(n_channel x 2)``. X and Y coordinates of each recording channel.

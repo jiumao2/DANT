@@ -138,7 +138,11 @@ The number of templates (reference probes) used for waveform correction. It shou
 Default: ``""``
 
 **DANT & pyDANT:**
-The path to a pre-computed motion ``.npy`` file (typically a vector with one value per session, for example one estimated by DREDge). If empty, motion will be estimated from the data. This parameter can be useful if you have already estimated motion using another method and want to apply it directly. See :ref:`Waveform correction <waveform_correction_label>` for more details.
+The path to a user-provided motion ``.npy`` file. If empty, motion will be estimated from the data. This parameter can be useful if you have a motion estimate from another method or if you want to manually correct a clearly wrong DANT motion estimate and apply it directly.
+
+The motion values should be in μm and ordered by session index. Rigid motion can be provided as ``n_session``, ``1 x n_session``, or ``n_session x 1``. Non-rigid motion can be provided as ``2 x n_session`` or ``n_session x 2``, where the first row is the linear term and the second row is the constant term.
+
+When this parameter is set, the first entry in ``motionEstimation.features`` must include ``"Waveform"``. See :ref:`Manually setting motion <manual_motion_label>` and :ref:`Waveform correction <waveform_correction_label>` for more details.
 
 .. _autocorr_setting_label:
 
@@ -236,6 +240,8 @@ Default:
 
 **DANT & pyDANT:**
 The features used for motion estimation in each iteration. The features should be chosen from ``"Waveform"``, ``"AutoCorr"``, ``"ISI"``, or ``"PETH"``. In some datasets with large probe motion, the waveform feature may not be reliable, and you can use ``"AutoCorr"`` and ``"PETH"`` in the first iteration. If ``PETH`` is not available, do not use ``"AutoCorr"`` alone for the first iteration; use ``["Waveform", "AutoCorr"]`` instead.
+
+If ``waveformCorrection.path_to_motion`` is set, the first feature set must include ``"Waveform"``. Manual motion is applied through waveform correction, so a first round without ``"Waveform"`` would not use the manually corrected waveforms.
 
 ``motionEstimation.max_iter``
 +++++++++++++++++++++++++++++++++++

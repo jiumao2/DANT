@@ -217,14 +217,16 @@ if any(strcmpi(motion_features, 'AutoCorr')) ||...
     window = user_settings.autoCorr.window; % ms   
     binwidth = user_settings.autoCorr.binwidth; % ms   
     sigma = user_settings.autoCorr.gaussian_sigma;
-    auto_corr_all = zeros(n_unit, 2*window+1);
+    n_auto_corr_bin = 2 * floor(window / binwidth) + 1;
+    smooth_window = max(1, round(5 * sigma / binwidth));
+    auto_corr_all = zeros(n_unit, n_auto_corr_bin);
 
     if is_parallel
         parfor k = 1:n_unit
             [auto_corr, lag] = computeAutoCorr(spike_times{k}, window, binwidth);
     
-            auto_corr(lag>0) = smoothdata(auto_corr(lag>0), 'gaussian', 5*sigma);
-            auto_corr(lag<0) = smoothdata(auto_corr(lag<0), 'gaussian', 5*sigma);
+            auto_corr(lag>0) = smoothdata(auto_corr(lag>0), 'gaussian', smooth_window);
+            auto_corr(lag<0) = smoothdata(auto_corr(lag<0), 'gaussian', smooth_window);
             auto_corr = auto_corr./max(auto_corr);
             
             auto_corr_all(k,:) = auto_corr;
@@ -235,8 +237,8 @@ if any(strcmpi(motion_features, 'AutoCorr')) ||...
         for k = 1:n_unit
             [auto_corr, lag] = computeAutoCorr(spike_times{k}, window, binwidth);
     
-            auto_corr(lag>0) = smoothdata(auto_corr(lag>0), 'gaussian', 5*sigma);
-            auto_corr(lag<0) = smoothdata(auto_corr(lag<0), 'gaussian', 5*sigma);
+            auto_corr(lag>0) = smoothdata(auto_corr(lag>0), 'gaussian', smooth_window);
+            auto_corr(lag<0) = smoothdata(auto_corr(lag<0), 'gaussian', smooth_window);
             auto_corr = auto_corr./max(auto_corr);
             
             auto_corr_all(k,:) = auto_corr;
@@ -260,7 +262,9 @@ if any(strcmpi(motion_features, 'ISI')) ||...
     sigma = user_settings.ISI.gaussian_sigma;
     binwidth = user_settings.ISI.binwidth;
 
-    isi_all = zeros(n_unit, window);
+    n_isi_bin = ceil(window / binwidth);
+    smooth_window = max(1, round(5 * sigma / binwidth));
+    isi_all = zeros(n_unit, n_isi_bin);
     if is_parallel
         parfor k = 1:n_unit
             isi = diff(spike_times{k});
@@ -268,7 +272,7 @@ if any(strcmpi(motion_features, 'ISI')) ||...
                 'BinLimits', [0, window],...
                 'BinWidth', binwidth);
             isi_freq = isi_hist./sum(isi_hist);
-            isi_freq_smoothed = smoothdata(isi_freq, 'gaussian', 5*sigma);
+            isi_freq_smoothed = smoothdata(isi_freq, 'gaussian', smooth_window);
             isi_all(k,:) = isi_freq_smoothed;
         
             updateParallel(1);
@@ -280,7 +284,7 @@ if any(strcmpi(motion_features, 'ISI')) ||...
                 'BinLimits', [0, window],...
                 'BinWidth', binwidth);
             isi_freq = isi_hist./sum(isi_hist);
-            isi_freq_smoothed = smoothdata(isi_freq, 'gaussian', 5*sigma);
+            isi_freq_smoothed = smoothdata(isi_freq, 'gaussian', smooth_window);
             isi_all(k,:) = isi_freq_smoothed;
         
             progBar([], [], []);

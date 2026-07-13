@@ -34,17 +34,20 @@ This parameter is not used and should be omitted. pyDANT runs directly in the ac
 ``save_intermediate_results``
 -------------------------------
 
-Default: ``false``
+Default: ``true``
 
-**DANT & pyDANT:**
-Whether to save the intermediate results. If set to ``true``, intermediate ``.mat``, ``.npy``, or ``.npz`` results will be saved in the output folder. This can be useful for debugging or further analysis.
+**DANT:**
+Whether to save optional intermediate ``.mat`` results. With the default ``true``, DANT writes ``spikeInfo.mat``, ``Motion.mat``, and ``SimilarityMatrix.mat``.
+
+**pyDANT:**
+pyDANT always writes the required ``.npy`` and ``.npz`` pipeline artifacts. This compatibility field does not currently change pyDANT output.
 
 ``save_intermediate_figures``
 -------------------------------
 
 Default: ``false``
 
-**DANT & pyDANT:**
+**DANT:**
 Whether to save the intermediate figures generated during processing. If set to ``true``, the figures will be saved in the output folder. This can be useful for inspecting the motion correction process.
 
 ``n_jobs``
@@ -286,7 +289,7 @@ The maximum distance (in μm) between unit pairs in the Y direction for weight o
 +++++++++++++++++++++++
 
 
-Default: ``["Waveform", "AutoCorr", "PETH"]``
+Default: ``["Waveform", "AutoCorr"]``
 
 **DANT & pyDANT:**
 The features used for clustering. The features should be chosen from ``"Waveform"``, ``"AutoCorr"``, ``"ISI"``, or ``"PETH"``. For example, you can set this field to ``["Waveform"]``, ``["AutoCorr"]``, ``["ISI"]``, or ``["PETH"]`` if you want to use only one feature.

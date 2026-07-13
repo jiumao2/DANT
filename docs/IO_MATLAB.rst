@@ -33,7 +33,7 @@ See :ref:`output_matlab_label` for details.
 ``Motion.mat``
 ++++++++++++++++
 
-This file contains a struct variable named ``Motion``, which stores the estimated probe motion across sessions. The fields are listed below:
+For a single-shank run, this file is written when ``save_intermediate_results`` is ``true``. For a multi-shank run, each shank's file is saved in ``Shank<ID>/``. It contains a struct variable named ``Motion``, which stores the estimated probe motion across sessions. The fields are listed below:
 
 ===========================     =============================               =================
 Field name                      Type                                        Explanation  
@@ -61,7 +61,7 @@ This file contains a variable named ``waveforms_corrected``, which is a n_unit x
 ``resultIter.mat``
 ++++++++++++++++++++
 
-This file contains a variable named ``resultIter``, which is a 1 x ``n_iter`` struct array. ``n_iter`` is the number of accepted motion-correction iterations saved before the loop finished. If early stopping rejects a new motion estimate, that rejected iteration is not kept in ``resultIter``. The fields are listed below:
+For a multi-shank run, this file is saved in each ``Shank<ID>/`` folder. It contains a variable named ``resultIter``, which is a 1 x ``n_iter`` struct array. ``n_iter`` is the number of accepted motion-correction iterations saved before the loop finished. If early stopping rejects a new motion estimate, that rejected iteration is not kept in ``resultIter``. The fields are listed below:
 
 ===========================     =============================               =================
 Field name                      Type                                        Explanation  
@@ -75,7 +75,7 @@ Field name                      Type                                        Expl
 ``SimilarityMatrix.mat``
 +++++++++++++++++++++++++++++
 
-This file contains two variables named ``feature_names_all`` and ``similarity_matrix_all``.
+This file is written when ``save_intermediate_results`` is ``true``; for a multi-shank run, it is saved in each ``Shank<ID>/`` folder. It contains two variables named ``feature_names_all`` and ``similarity_matrix_all``.
 
 ``similarity_matrix_all`` is a n_unit x n_unit x n_feature 3D array containing all similarity scores for all pairs of units. ``feature_names_all`` is a 1 x n_feature array indexing the features in ``similarity_matrix_all``. Some features are not used in later clustering steps, so their entries will be zero in ``similarity_matrix_all``. PETH similarity is computed from overlapping non-NaN PETH elements.
 

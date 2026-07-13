@@ -131,12 +131,12 @@ To learn more about the settings, please refer to the :doc:`Change default setti
 Run the code
 -----------------------
 
-Run ``mainDANT.m`` or ``mainDANT_MultiShank.m``. The tracking results should appear in the output folder specified in ``settings.json``. A typical output layout looks like this:
+Run ``mainDANT.m`` or ``mainDANT_MultiShank.m``. For a single-shank run, the output layout is as follows:
 
 .. code-block::
 
     your_data_folder/
-    ├── mainDANT.m or mainDANT_MultiShank.m
+    ├── mainDANT.m
     ├── settings.json
     ├── spikeInfo.mat
     └── DANT_Output/
@@ -151,6 +151,8 @@ Run ``mainDANT.m`` or ``mainDANT_MultiShank.m``. The tracking results should app
         ├── HDBSCAN_settings.json
         └── Figures/
             └── Overview.png
+
+For multi-shank runs, the root output folder contains the merged ``Output.mat``, ``Waveforms.mat``, and ``spikeInfo.mat``; each shank's ``Motion.mat``, ``resultIter.mat``, and ``SimilarityMatrix.mat`` are saved in ``Shank<ID>/``.
 
 .. _visualize_the_results_label:
 

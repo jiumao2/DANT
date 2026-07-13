@@ -29,6 +29,7 @@ function waveform_similarity_matrix = computeWaveformSimilarityMatrix(user_setti
 n_nearest_channels = user_settings.waveformCorrection.n_nearest_channels;
 n_unit = size(waveforms_all, 1);
 n_templates = size(waveforms_all, 4);
+max_correlation = tanh(6);
 
 if nargin < 4
     channel_shanks = ones(size(channel_locations, 1), 1);
@@ -69,6 +70,7 @@ for i_template = 1:n_templates
 
         temp = corr(waveform_this(:, idx_units), waveform_this);
         temp(isnan(temp)) = 0;
+        temp = min(max(temp, -max_correlation), max_correlation);
         temp = atanh(temp);
         
         waveform_similarity_matrix_this(idx_units,:) = temp;

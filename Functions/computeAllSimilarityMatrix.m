@@ -51,6 +51,7 @@ function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix
 
 n_unit = size(waveforms_all, 1);
 max_similarity = 6; % r = 0.999987
+max_correlation = tanh(max_similarity);
 
 waveform_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'Waveform'))
@@ -67,6 +68,7 @@ ISI_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'ISI'))
     ISI_similarity_matrix = corrcoef(ISI_features');
     ISI_similarity_matrix(isnan(ISI_similarity_matrix)) = 0;
+    ISI_similarity_matrix = min(max(ISI_similarity_matrix, -max_correlation), max_correlation);
     ISI_similarity_matrix = atanh(ISI_similarity_matrix);
 end
 ISI_similarity_matrix(ISI_similarity_matrix > max_similarity) = max_similarity;
@@ -75,6 +77,7 @@ AutoCorr_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'AutoCorr'))
     AutoCorr_similarity_matrix = corrcoef(AutoCorr_features');
     AutoCorr_similarity_matrix(isnan(AutoCorr_similarity_matrix)) = 0;
+    AutoCorr_similarity_matrix = min(max(AutoCorr_similarity_matrix, -max_correlation), max_correlation);
     AutoCorr_similarity_matrix = atanh(AutoCorr_similarity_matrix);
 end
 AutoCorr_similarity_matrix(AutoCorr_similarity_matrix > max_similarity) = max_similarity;
@@ -106,6 +109,7 @@ if any(strcmpi(feature_names, 'PETH'))
         PETH_similarity_matrix = corrcoef(PETH_features');
     end
     PETH_similarity_matrix(isnan(PETH_similarity_matrix)) = 0;
+    PETH_similarity_matrix = min(max(PETH_similarity_matrix, -max_correlation), max_correlation);
     PETH_similarity_matrix = atanh(PETH_similarity_matrix);
 end
 PETH_similarity_matrix(PETH_similarity_matrix > max_similarity) = max_similarity;

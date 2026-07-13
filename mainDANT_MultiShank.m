@@ -131,11 +131,11 @@ for i_shank = 1:length(shankIDs)
     idx_unit_pairs = getNearbyPairs(max_distance, sessions, locations, Motion);
     
     % compute similarity matrix
+    feature_names = user_settings.clustering.features';
     [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
         user_settings, waveforms_corrected, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs, channel_shanks);
     
     % iterative HDBSCAN
-    feature_names = user_settings.clustering.features';
     idx_features = cellfun(@(x)find(strcmpi(feature_names_all, x)), feature_names);
     [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all, weights, thres, good_matches_matrix, leafOrder] = ...
         iterativeClustering(user_settings, path_DANT, similarity_matrix_all(:,:,idx_features), feature_names, idx_unit_pairs, sessions);

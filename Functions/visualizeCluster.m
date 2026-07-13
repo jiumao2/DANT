@@ -69,6 +69,8 @@ if length(size(waveforms)) == 4
     mean_ptts = mean(max(waveforms(units,:,:,:), [], 3) - min(waveforms(units,:,:,:), [], 3), 1:3);
     [~, idx_max] = max(mean_ptts);
     waveforms = waveforms(units,:,:,idx_max);
+else
+    waveforms = waveforms(units,:,:);
 end
 
 ISI = [];

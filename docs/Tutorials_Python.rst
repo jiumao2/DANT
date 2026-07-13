@@ -46,6 +46,8 @@ Filename                       Shape                                   Explanati
 ``spike_times/UnitX.npy``      (n_spike,)                              spike times in milliseconds
 ===========================    ======================================  =================================================
 
+If you include the optional ``peth.npy`` file, all units should have the same PETH length. If some event/time bins are missing for a unit, fill those bins with ``NaN``.
+
 For multi-shank probes, such as Neuropixels 2.0 probes with multiple shanks, provide ``channel_shanks.npy`` in the input data folder. During preprocessing, pyDANT generates ``unit_shanks.npy`` by assigning each unit to the shank of its peak channel.
 
 Crucially, the waveforms used in this analysis must not be whitened, unlike the waveforms processed by Kilosort. Avoid direct use of waveforms from ``temp_wh.dat`` and refrain from using ``whitening_mat_inv.npy`` or ``whitening_mat.npy`` from Kilosort2.5 / Kilosort3 to "unwhiten" data. These matrices do not correspond to Kilosort's original whitening process (see this `issue <https://github.com/cortex-lab/phy/issues/1040>`_).

@@ -138,7 +138,7 @@ This function identifies nearest channels per unit on the probe, groups units wi
 
 Compute and visualize similarity matrices across multiple features.
 
-This function computes pairwise similarity matrices for waveform, ISI, autocorrelation, and PETH features as specified by ``feature_names``. The resulting matrices are concatenated into a 3D array. A histogram of similarity values for the requested unit pairs is plotted, and figures are optionally saved to disk.
+This function computes pairwise similarity matrices for waveform, ISI, autocorrelation, and PETH features as specified by ``feature_names``. PETH similarity ignores ``NaN`` bins pairwise. The resulting matrices are concatenated into a 3D array. A histogram of similarity values for the requested unit pairs is plotted, and figures are optionally saved to disk.
 
 **Inputs**
 
@@ -149,7 +149,7 @@ This function computes pairwise similarity matrices for waveform, ISI, autocorre
 - ``channel_locations``: double array ``(C x 2)`` or ``(C x 3)``. Spatial coordinates of each recording channel.
 - ``ISI_features``: double matrix. Inter-spike interval features.
 - ``AutoCorr_features``: double matrix. Autocorrelation features.
-- ``PETH_features``: double matrix. Peristimulus time histogram features.
+- ``PETH_features``: double matrix. Peristimulus time histogram features. Missing PETH bins may be marked as ``NaN``.
 - ``feature_names``: cell array. Subset of ``{'Waveform','ISI','AutoCorr','PETH'}`` indicating which similarities to compute.
 - ``idx_unit_pairs``: integer matrix. Each row contains a pair of unit indices for histogram plotting.
 

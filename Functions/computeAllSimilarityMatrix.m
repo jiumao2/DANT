@@ -3,7 +3,8 @@ function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix
 % COMPUTEALLSIMILARITYMATRIX  Compute and visualize similarity matrices across multiple features.
 %
 % This function computes pairwise similarity matrices for waveform, ISI, autocorrelation, 
-% and PETH features as specified by feature_names. The resulting matrices are concatenated 
+% and PETH features as specified by feature_names. PETH bins marked as NaN are ignored
+% pairwise during PETH similarity calculation. The resulting matrices are concatenated 
 % into a 3D array. A histogram of similarity values for each requested unit pair is plotted, 
 % and figures are optionally saved to disk.
 %
@@ -25,7 +26,8 @@ function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix
 %       Autocorrelation features for each of n_unit units  
 %
 %   PETH_features               double matrix (n_unit x F_PETH)  
-%       Peristimulus time histogram features for each of n_unit units  
+%       Peristimulus time histogram features for each of n_unit units.
+%       Missing PETH bins may be marked as NaN.
 %
 %   feature_names               cell (1 × K) of char  
 %       Subset of {'Waveform','ISI','AutoCorr','PETH'} indicating which similarities to compute  
@@ -79,7 +81,30 @@ AutoCorr_similarity_matrix(AutoCorr_similarity_matrix > max_similarity) = max_si
 
 PETH_similarity_matrix = zeros(n_unit);
 if any(strcmpi(feature_names, 'PETH'))
-    PETH_similarity_matrix = corrcoef(PETH_features');
+    if any(isnan(PETH_features), 'all')
+        valid_PETH = ~isnan(PETH_features);
+        [valid_patterns, ~, idx_valid_patterns] = unique(valid_PETH, 'rows');
+        PETH_similarity_matrix = nan(n_unit);
+        for idx_pattern1 = 1:size(valid_patterns, 1)
+            idx_units1 = find(idx_valid_patterns == idx_pattern1);
+            for idx_pattern2 = idx_pattern1:size(valid_patterns, 1)
+                idx_units2 = find(idx_valid_patterns == idx_pattern2);
+                idx_valid = valid_patterns(idx_pattern1,:) & valid_patterns(idx_pattern2,:);
+                if ~any(idx_valid)
+                    error('PETH features for units %d and %d have no overlapping valid elements.', idx_units1(1), idx_units2(1));
+                end
+
+                PETH1 = PETH_features(idx_units1, idx_valid);
+                PETH2 = PETH_features(idx_units2, idx_valid);
+                corr_this = corr(PETH1', PETH2');
+
+                PETH_similarity_matrix(idx_units1,idx_units2) = corr_this;
+                PETH_similarity_matrix(idx_units2,idx_units1) = corr_this';
+            end
+        end
+    else
+        PETH_similarity_matrix = corrcoef(PETH_features');
+    end
     PETH_similarity_matrix(isnan(PETH_similarity_matrix)) = 0;
     PETH_similarity_matrix = atanh(PETH_similarity_matrix);
 end

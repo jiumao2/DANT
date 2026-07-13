@@ -53,6 +53,8 @@ The PETH feature is precomputed during data processing. It captures the function
 .. math::
     \mathbf{S}^{i,j}_{\text{PETH}} = \tanh^{-1}(\operatorname{corrcoef}(\text{PETH}_i, \text{PETH}_j)).
 
+If some PETH bins are missing, they can be marked as ``NaN``. DANT computes PETH similarity from the overlapping non-NaN elements for each unit pair.
+
 .. _Autocorrelogram_feature_label:
 
 Autocorrelogram

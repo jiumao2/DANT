@@ -77,7 +77,7 @@ Field name                      Type                                        Expl
 
 This file contains two variables named ``feature_names_all`` and ``similarity_matrix_all``.
 
-``similarity_matrix_all`` is a n_unit x n_unit x n_feature 3D array containing all similarity scores for all pairs of units. ``feature_names_all`` is a 1 x n_feature array indexing the features in ``similarity_matrix_all``. Some features are not used in later clustering steps, so their entries will be zero in ``similarity_matrix_all``.
+``similarity_matrix_all`` is a n_unit x n_unit x n_feature 3D array containing all similarity scores for all pairs of units. ``feature_names_all`` is a 1 x n_feature array indexing the features in ``similarity_matrix_all``. Some features are not used in later clustering steps, so their entries will be zero in ``similarity_matrix_all``. PETH similarity is computed from overlapping non-NaN PETH elements.
 
 Intermediate files
 +++++++++++++++++++++

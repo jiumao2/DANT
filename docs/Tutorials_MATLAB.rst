@@ -24,6 +24,8 @@ Field name         Type                                     Explanation
 ``PETH``           1 x n double                             peri-event time histogram (optional)
 =================  =============================            ==================
 
+If you include the optional ``PETH`` field, all units should have the same PETH length. If some event/time bins are missing for a unit, fill those bins with ``NaN``.
+
 Crucially, the waveforms used in this analysis must not be whitened, unlike those processed by Kilosort. Avoid direct use of waveforms from ``temp_wh.dat`` and refrain from using ``whitening_mat_inv.npy`` or ``whitening_mat.npy`` from Kilosort2.5 / Kilosort3 to "unwhiten" data. These matrices do not correspond to Kilosort's original whitening process (see this `issue <https://github.com/cortex-lab/phy/issues/1040>`_).
 
 We recommend analyzing data from different brain regions (e.g., cortex and striatum) individually, as they may exhibit distinct drifts and neuronal properties. Please generate a separate ``spikeInfo.mat`` file for each brain region.

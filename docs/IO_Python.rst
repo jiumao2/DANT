@@ -69,7 +69,7 @@ If ``channel_shanks.npy`` is available, preprocessing also saves ``unit_shanks.n
 Similarity matrix
 ++++++++++++++++++++
 
-Four similarity matrices will be saved to ``waveform_similarity_matrix.npy``, ``ISI_similarity_matrix.npy``, ``AutoCorr_similarity_matrix.npy`` and ``PETH_similarity_matrix.npy``. If some features are not used, the corresponding matrices will be filled with zeros. The final weighted similarity matrix will be saved in ``SimilarityMatrix.npy``. In multi-shank root outputs, rows and columns remain in the original global unit order. Similarity is only computed within each shank; entries for unit pairs from different shanks are left as uncomputed zero values and are not treated as matches.
+Four similarity matrices will be saved to ``waveform_similarity_matrix.npy``, ``ISI_similarity_matrix.npy``, ``AutoCorr_similarity_matrix.npy`` and ``PETH_similarity_matrix.npy``. If some features are not used, the corresponding matrices will be filled with zeros. ``PETH_similarity_matrix.npy`` is computed from overlapping non-NaN PETH elements. The final weighted similarity matrix will be saved in ``SimilarityMatrix.npy``. In multi-shank root outputs, rows and columns remain in the original global unit order. Similarity is only computed within each shank; entries for unit pairs from different shanks are left as uncomputed zero values and are not treated as matches.
 
 
 Motion correction

@@ -203,7 +203,8 @@ for k = 1:n_unit
     spike_times{k} = sort(spikeInfo(k).SpikeTimes);
 end
 
-motion_features = [user_settings.motionEstimation.features{:}];
+motion_features = cellfun(@(x)x(:), user_settings.motionEstimation.features, 'UniformOutput', false);
+motion_features = vertcat(motion_features{:});
 
 if any(strcmpi(motion_features, 'AutoCorr')) ||...
             any(strcmpi(user_settings.clustering.features, 'AutoCorr'))

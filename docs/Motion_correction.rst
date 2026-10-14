@@ -167,6 +167,49 @@ The good news is that users do not need to manually repeat the final feature set
 
 See :ref:`Change default settings <motion_correction_features_label>` for details on modifying these parameters in your specific configuration file.
 
+.. _shared_motion_label:
+
+Shared motion initialization for multi-shank probes
+---------------------------------------------------
+
+Shanks on the same probe may share a substantial component of motion. DANT and
+pyDANT can estimate a common initial trajectory using matched pairs from all
+shanks, before continuing independent motion correction on each shank.
+
+During shared estimation, similarities are computed together for all units.
+HDBSCAN operates separately within each shank, while
+LDA learns one set of feature weights and one similarity threshold from their
+pooled within-shank pairs. Reliable cross-session pairs then jointly constrain
+the existing rigid or linear motion model. Units on different shanks are never
+matched to one another. Each reliable pair has equal weight in the motion fit.
+PETH pairs with no overlapping valid bins still raise an error within a shank.
+If such pairs occur only between shanks, their PETH similarities are left as
+zero placeholders and do not participate in matching. This can occur when
+shanks cover different subsets of sessions, even if valid bins agree within
+each session.
+
+The supplied shared schedule starts with ``AutoCorr`` and ``PETH``, then adds
+``Waveform``. After successful estimation, each shank is initialized with the
+common motion and uses ``motionEstimation.features_after_shared``, whose first
+feature set must include ``Waveform``. Each local iteration still estimates the
+complete motion from original unit depths and corrects the original waveforms;
+the shared and local estimates are not added together. In MATLAB, each local
+initial motion copy covers ``1:max(sessions)`` for that shank, preserving the
+original session indices and any internal gaps. The saved shared trajectory
+retains the full global range.
+
+Shared estimation uses the same match-count early stopping rule as independent
+estimation. It succeeds when a fitted state is retained, including a valid
+zero-motion estimate. If it returns to the unfitted initial state, or reliable
+pairs cannot determine the model or the shared LDA fit is degenerate, a warning
+is issued and the original independent pipeline and feature schedule are used.
+Configuration, file and unexpected program errors still stop the run.
+
+This is an initialization strategy, not a constraint on subsequent local fits.
+It does not automatically retain shared motion for sparse shanks and does not
+guarantee improved tracking. Single-shank defaults are unchanged. Settings and
+manual-motion precedence are described :ref:`here <shared_motion_settings_label>`.
+
 .. _non_rigid_correction_label:
 
 Non-rigid motion correction

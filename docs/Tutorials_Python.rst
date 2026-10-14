@@ -134,7 +134,7 @@ For multi-shank data, run ``mainDANT_MultiShank.py`` instead:
 
     python mainDANT_MultiShank.py
 
-The multi-shank entry point calls ``runDANTMultiShank(user_settings)``. It processes each shank separately and then merges the per-shank results into the root output folder.
+The multi-shank entry point calls ``runDANTMultiShank(user_settings)``. It optionally estimates shared motion, processes each shank separately, and then merges the per-shank results into the root output folder.
 
 
 The tracking results should appear in the output folder specified in ``settings.json``. A typical output layout looks like this:
@@ -157,6 +157,17 @@ The tracking results should appear in the output folder specified in ``settings.
         ├── SimilarityMatrix.npy
         ├── ...
         └── Figures/
+
+With the supplied settings, multi-shank runs first attempt shared motion
+initialization. Set ``sharedMotion.enabled`` to ``false`` to keep independent
+processing. The original ``motionEstimation.features`` schedule remains unchanged;
+only a successful shared estimate selects ``features_after_shared`` for each shank.
+``SharedMotion/SharedMotion.npz`` records ``success``, ``reason``, the final
+``Linear``, ``Constant`` and ``LinearScale`` values, resolved settings and retained
+iterations. ``MotionIterations.npz`` records each local stage's actual features,
+weights, thresholds, match counts and motion states. Final per-shank motion files
+correspond to the state retained after early stopping.
+See :ref:`Shared motion initialization <shared_motion_label>` for details.
 
 For multi-shank runs, the root output folder also contains ``unit_shanks.npy`` and merged global outputs such as ``Output.npz``, ``ClusteringResults.npz``, ``ClusterMatrix.npy``, ``IdxCluster.npy``, ``MatchedPairs.npy``, the similarity matrices, and ``waveforms_corrected.npy``. The merged ``Output.npz`` includes ``IdxUnit`` and ``IdxShank`` fields. Complete per-shank outputs are saved under ``Shank<ID>/`` subfolders.
 

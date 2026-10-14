@@ -182,6 +182,36 @@ This function applies optional motion correction to raw depths, computes pairwis
 Motion Correction
 -----------------
 
+``getSharedMotionSettings(user_settings, spikeInfo)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Resolve shared settings and additional preprocessing features without changing
+the original configuration. Returns an empty settings value when disabled,
+overridden by manual motion, or fewer than two shanks contain units.
+
+``estimateSharedMotion(user_settings, path_DANT, spikeInfo, shanks_data)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Estimate common motion from preprocessed units using pooled feature weights
+and within-shank clustering. Takes resolved shared settings and returns
+``Motion``, ``success`` and ``resultIter``. Expected insufficient matching
+constraints warn and return zero motion with ``success=false``. Other errors
+propagate. Writes the final state and configuration to ``SharedMotion.mat``.
+
+``preprocessSpikeInfo`` accepts an optional third argument,
+``additional_features``, for the shared and post-shared schedules.
+``initializeMotion`` accepts an optional sixth argument, ``initial_Motion``,
+to initialize directly from successful shared motion. Its effective first
+feature set must include ``Waveform``.
+``iterativeClustering`` accepts optional ``unit_shanks`` as its seventh argument:
+input pairs must be within shanks, HDBSCAN clusters each shank separately, and
+LDA learns pooled weights and a threshold. No global leaf ordering is returned
+in this mode. Similarities are computed together for all units using
+``computeAllSimilarityMatrix``. Its optional tenth argument, ``unit_shanks``,
+restricts the missing-PETH-overlap check to within-shank pairs; it does not split
+the similarity calculation. The local shared-motion copy in ``initializeMotion``
+is restricted to ``1:max(sessions)`` without renumbering sessions.
+
 ``initializeMotion(user_settings, waveforms_all, sessions, channel_locations, locations)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

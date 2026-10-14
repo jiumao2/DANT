@@ -1,6 +1,6 @@
 function [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all,...
     weights, thres, good_matches_matrix, leafOrder] = ...
-    iterativeClustering(user_settings, path_DANT, similarity_matrix_all, feature_names, idx_unit_pairs, sessions)
+    iterativeClustering(user_settings, path_DANT, similarity_matrix_all, feature_names, idx_unit_pairs, sessions, unit_shanks)
 % ITERATIVECLUSTERING  Iterative HDBSCAN clustering with adaptive feature weighting.
 %
 % Performs iterative HDBSCAN clustering on unit similarity data.
@@ -31,6 +31,11 @@ function [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all
 %   sessions                  integer vector (n_unit × 1)
 %       Session index for each unit.
 %
+%   unit_shanks               optional vector with one shank ID per unit.
+%       HDBSCAN runs within shanks; LDA weights and threshold are pooled.
+%       Zero within-class variance is an expected shared-estimation failure.
+%       Shared mode does not return a global hierarchical leaf ordering.
+%
 % Outputs:
 %   hdbscan_matrix            logical (n_unit × n_unit)
 %       Final cluster adjacency after the last iteration.
@@ -59,6 +64,11 @@ function [hdbscan_matrix, idx_cluster_hdbscan, similarity_matrix, similarity_all
 % Date:    20250821  
 % Author:  Yue Huang  
 
+grouped = nargin >= 7 && ~isempty(unit_shanks);
+if grouped
+    unit_shanks = unit_shanks(:);
+    writeNPY(unit_shanks, fullfile(user_settings.output_folder, 'UnitShanks.npy'));
+end
 n_unit = size(similarity_matrix_all, 1);
 n_session = max(sessions);
 n_pair = size(idx_unit_pairs, 1);
@@ -99,6 +109,9 @@ for iter = 1:user_settings.clustering.n_iter
     HDBSCAN_settings.max_cluster_size = n_session;
     HDBSCAN_settings.metric = 'precomputed';
     HDBSCAN_settings.data_folder = user_settings.output_folder;
+    if grouped
+        HDBSCAN_settings.unit_shanks_file = 'UnitShanks.npy';
+    end
     
     json_text = jsonencode(HDBSCAN_settings);
     
@@ -123,7 +136,7 @@ for iter = 1:user_settings.clustering.n_iter
         error('DANT:HDBSCANFailed', 'HDBSCAN Python call failed:\n%s\nCommand:\n%s', cmdout, cmd);
     end
 
-    if ~isfile(cluster_file) || ~isfile(linkage_file)
+    if ~isfile(cluster_file) || (~grouped && ~isfile(linkage_file))
         error('DANT:HDBSCANMissingOutput', 'HDBSCAN did not generate expected output files.');
     end
     
@@ -146,13 +159,28 @@ for iter = 1:user_settings.clustering.n_iter
     hdbscan_matrix(eye(n_unit) == 1) = 1;
     is_matched = hdbscan_matrix(idx_pairs_in_matrix);
 
-    if iter ~= user_settings.clustering.n_iter
+    if grouped && numel(unique(is_matched)) < 2
+        error('DANT:InsufficientSharedMatches', 'Shared LDA requires matched and unmatched within-shank pairs.');
+    end
+
+    if iter ~= user_settings.clustering.n_iter || (grouped && iter == 1)
         prev_weights = weights; % store weights prior to LDA update
 
         % LDA and update weights
-        mdl = fitcdiscr(similarity_all, is_matched);
+        try
+            mdl = fitcdiscr(similarity_all, is_matched);
+        catch exception
+            if grouped && strcmp(exception.identifier, ...
+                    'stats:ClassificationDiscriminant:ClassificationDiscriminant:ZeroDiagCovLin')
+                error('DANT:InsufficientSharedMatches', 'Shared LDA has a feature with zero within-class variance.');
+            end
+            rethrow(exception)
+        end
         temp = (mdl.Coeffs(1,2).Linear)';
         weights = temp./sum(temp);
+        if grouped && any(~isfinite(weights))
+            error('DANT:InsufficientSharedMatches', 'Shared feature weights could not be determined.');
+        end
         disp('Weights:');
         disp(strjoin(feature_names, '   '));
         disp(weights);
@@ -172,10 +200,19 @@ if nargout >= 6
     % set the threshold based on LDA results
     thres = mdl.Coeffs(1,2).Const ./ (-mdl.Coeffs(1,2).Linear(1)) .* weights(1);
 
+    if grouped && ~isfinite(thres)
+        error('DANT:InsufficientSharedMatches', 'Shared similarity threshold could not be determined.');
+    end
     good_matches_matrix = similarity_matrix > thres;
+    if grouped
+        good_matches_matrix(unit_shanks ~= unit_shanks') = false;
+    end
     good_matches_matrix(eye(size(good_matches_matrix)) == 1) = 1;
 end
 
+if nargout >= 8 && grouped
+    error('DANT:SharedLinkage', 'Shared clustering has no cross-shank hierarchical leaf ordering.');
+end
 if nargout >= 8
     Z = double(readNPY(linkage_file));
     leafOrder = optimalleaforder(Z, distance_matrix);

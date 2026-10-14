@@ -1,4 +1,4 @@
-function spikeInfo = preprocessSpikeInfo(user_settings, spikeInfo)
+function spikeInfo = preprocessSpikeInfo(user_settings, spikeInfo, additional_features)
 % PREPROCESSSPIKEINFO  Prepare directories, validate and preprocess spikeInfo structures.
 %
 % This function creates output and figure folders, checks session index continuity,
@@ -34,6 +34,9 @@ function spikeInfo = preprocessSpikeInfo(user_settings, spikeInfo)
 %           Gaussian smoothing sigma for ISI histogram
 %       .save_intermediate_results    logical scalar
 %           Flag to save spikeInfo.mat after preprocessing
+%
+%   additional_features         Optional cell array of extra feature names.
+%       Used by the multi-shank shared and post-shared schedules only.
 %
 %   spikeInfo                   struct array (1 × n_unit)
 %       .SessionIndex             double scalar
@@ -205,6 +208,9 @@ end
 
 motion_features = cellfun(@(x)x(:), user_settings.motionEstimation.features, 'UniformOutput', false);
 motion_features = vertcat(motion_features{:});
+if nargin >= 3
+    motion_features = [motion_features; additional_features(:)];
+end
 
 if any(strcmpi(motion_features, 'AutoCorr')) ||...
             any(strcmpi(user_settings.clustering.features, 'AutoCorr'))

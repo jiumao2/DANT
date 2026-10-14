@@ -24,10 +24,25 @@ mdl = hdbscan.HDBSCAN(
     cluster_selection_epsilon=settings['cluster_selection_epsilon']
 )
 
-idx = mdl.fit_predict(distance_matrix)
+if 'unit_shanks_file' in settings:
+    shanks = np.load(os.path.join(data_folder, settings['unit_shanks_file'])).ravel()
+    idx = np.full(len(shanks), -1, dtype=np.int64)
+    offset = 0
+    for shank in np.unique(shanks):
+        units = np.flatnonzero(shanks == shank)
+        if len(units) < 2:
+            continue
+        labels = mdl.fit_predict(distance_matrix[np.ix_(units, units)])
+        matched = labels >= 0
+        idx[units[matched]] = labels[matched] + offset
+        if np.any(matched):
+            offset += int(labels[matched].max()) + 1
+else:
+    idx = mdl.fit_predict(distance_matrix)
 np.save(os.path.join(data_folder, 'ClusterIndices.npy'), idx)
 
-Z = mdl.single_linkage_tree_.to_numpy()
-Z_matlab = scipy.cluster.hierarchy.to_mlab_linkage(Z)
-np.save(os.path.join(data_folder, 'LinkageMatrix.npy'), Z_matlab)
+if 'unit_shanks_file' not in settings:
+    Z = mdl.single_linkage_tree_.to_numpy()
+    Z_matlab = scipy.cluster.hierarchy.to_mlab_linkage(Z)
+    np.save(os.path.join(data_folder, 'LinkageMatrix.npy'), Z_matlab)
 

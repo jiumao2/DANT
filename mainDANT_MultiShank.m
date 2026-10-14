@@ -1,3 +1,8 @@
+% MAINDANT_MULTISHANK  Track units within shanks with optional shared motion.
+% Reads settings and spikeInfo; writes merged results and Shank<ID> outputs
+% under output_folder. SharedMotion stores the optional common initialization.
+% Manual motion takes precedence; failed shared estimates use the original schedule.
+
 % Set the path to DANT and settings
 path_DANT = '.\DANT'; % The path where DANT is installed
 path_settings = '.\settings.json'; % Please make sure the settings in the file are accurate
@@ -15,11 +20,23 @@ tic_start = tic;
 fprintf('Loading %s...\n', path_to_data);
 load(path_to_data);
 
-spikeInfo = preprocessSpikeInfo(user_settings, spikeInfo);
+[shared_settings, additional_features] = getSharedMotionSettings(user_settings, spikeInfo);
+spikeInfo = preprocessSpikeInfo(user_settings, spikeInfo, additional_features);
 
 % read the shank ID of each unit
 shanks_data = arrayfun(@(x)x.Kcoords(x.Channel), spikeInfo);
-shankIDs = unique(spikeInfo(1).Kcoords);
+shankIDs = unique(shanks_data);
+original_settings = user_settings;
+shared_Motion = [];
+if ~isempty(shared_settings)
+    [shared_Motion, shared_success] = estimateSharedMotion(shared_settings, path_DANT, spikeInfo, shanks_data);
+    if shared_success && isfield(user_settings.motionEstimation, 'features_after_shared')
+        user_settings.motionEstimation.features = user_settings.motionEstimation.features_after_shared;
+    end
+    if ~shared_success
+        shared_Motion = [];
+    end
+end
 
 % fetch stop_early setting safely
 if isfield(user_settings.motionEstimation, 'stop_early')
@@ -62,7 +79,7 @@ for i_shank = 1:length(shankIDs)
         waveforms_all,...
         sessions,...
         channel_locations,...
-        locations);
+        locations, shared_Motion);
     Motion = initial_Motion;
 
     resultIter = struct();
@@ -166,5 +183,5 @@ for i_shank = 1:length(shankIDs)
 end
 
 % Combine the Output
-Output = mergeOutput(user_settings, spikeInfo, shanks_data, output_folder);
+Output = mergeOutput(original_settings, spikeInfo, shanks_data, output_folder);
 

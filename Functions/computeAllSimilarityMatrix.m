@@ -1,5 +1,5 @@
 function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix( ...
-    user_settings, waveforms_all, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs, channel_shanks)
+    user_settings, waveforms_all, channel_locations, ISI_features, AutoCorr_features, PETH_features, feature_names, idx_unit_pairs, channel_shanks, unit_shanks)
 % COMPUTEALLSIMILARITYMATRIX  Compute and visualize similarity matrices across multiple features.
 %
 % This function computes pairwise similarity matrices for waveform, ISI, autocorrelation, 
@@ -38,6 +38,11 @@ function [similarity_matrix_all, feature_names_all] = computeAllSimilarityMatrix
 %   channel_shanks              double array (C x 1), optional
 %       Shank ID assignment for each recording channel. If not provided,
 %       waveform similarity assumes all channels are on one shank.
+%
+%   unit_shanks                 double vector (n_unit), optional
+%       Shared mode only: PETH pairs with no overlapping bins are invalid only
+%       within a shank. Uncomputable cross-shank entries are zero placeholders.
+%       All other similarities are still computed globally.
 %
 % Outputs:
 %   similarity_matrix_all       double array (n_unit × n_unit × M)  
@@ -94,7 +99,19 @@ if any(strcmpi(feature_names, 'PETH'))
                 idx_units2 = find(idx_valid_patterns == idx_pattern2);
                 idx_valid = valid_patterns(idx_pattern1,:) & valid_patterns(idx_pattern2,:);
                 if ~any(idx_valid)
-                    error('PETH features for units %d and %d have no overlapping valid elements.', idx_units1(1), idx_units2(1));
+                    unit1 = idx_units1(1);
+                    unit2 = idx_units2(1);
+                    if nargin >= 10 && ~isempty(unit_shanks)
+                        [~, idx1, idx2] = intersect(unit_shanks(idx_units1), unit_shanks(idx_units2));
+                        if isempty(idx1)
+                            PETH_similarity_matrix(idx_units1,idx_units2) = 0;
+                            PETH_similarity_matrix(idx_units2,idx_units1) = 0;
+                            continue
+                        end
+                        unit1 = idx_units1(idx1(1));
+                        unit2 = idx_units2(idx2(1));
+                    end
+                    error('PETH features for units %d and %d have no overlapping valid elements.', unit1, unit2);
                 end
 
                 PETH1 = PETH_features(idx_units1, idx_valid);

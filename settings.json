@@ -37,6 +37,18 @@
         "gaussian_sigma": 1 // ms, for smoothing the ISI histogram
     },
 
+    // optional shared initialization for multi-shank runs
+    "sharedMotion":{
+        "enabled": true, // whether to estimate common motion before processing each shank. Missing settings keep independent processing.
+        "features": [
+            ["AutoCorr", "PETH"],
+            ["Waveform", "AutoCorr", "PETH"]
+        ], // feature sets used for shared motion estimation
+        "linear_correction": false, // whether to use linear correction for shared motion
+        "repeat_last_feature_set": true, // whether to reuse the final shared feature set
+        "stop_early": true // whether to stop shared estimation when the match count fails to increase
+    },
+
     // parameters for motion estimation
     "motionEstimation":{
         "max_distance": 100, // um. Unit pairs with distance larger than this value in Y direction will not be included for motion estimation
@@ -44,6 +56,9 @@
             ["AutoCorr", "PETH"],
             ["Waveform", "AutoCorr", "PETH"]
         ], // features used for motion estimation each iteration. Choose from "Waveform", "AutoCorr", "ISI", "PETH"
+        "features_after_shared": [
+            ["Waveform", "AutoCorr", "PETH"]
+        ], // used only after successful shared initialization; the first set must include Waveform
         "max_iter": 15, // maximum number of motion estimation iterations
         "repeat_last_feature_set": true, // whether to keep reusing the last feature set until stop_early triggers or max_iter is reached
         "stop_early": true // whether to terminate the motion estimation loop early if the number of matched unit pairs fails to increase

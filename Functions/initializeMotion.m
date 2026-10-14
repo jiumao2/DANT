@@ -1,5 +1,5 @@
 function [waveforms_corrected, Motion] = initializeMotion(user_settings, waveforms_all,...
-    sessions, channel_locations, locations)
+    sessions, channel_locations, locations, initial_Motion)
 % INITIALIZEMOTION  Initialize motion correction from pre-computed drift estimates.
 %
 % Loads session-wise motion values from a user-specified .npy file and applies
@@ -27,6 +27,11 @@ function [waveforms_corrected, Motion] = initializeMotion(user_settings, wavefor
 %   locations               double (n_unit × 2)  
 %       X,Y coordinates of the peak waveform location for each unit
 %
+%   initial_Motion          struct (optional)
+%       In-memory shared motion, restricted to 1:max(sessions) in the local copy.
+%       Session IDs are unchanged. The active first feature set must include Waveform.
+%       Original five-argument calls retain manual-file initialization.
+%
 % Outputs:
 %   waveforms_corrected     double (n_unit × n_channel × n_sample × n_templates)  
 %       Corrected waveform templates for each unit under each motion correction template
@@ -45,6 +50,19 @@ function [waveforms_corrected, Motion] = initializeMotion(user_settings, wavefor
 n_session = max(sessions);
 linear_scale = 1/1000;
 Motion = struct('Linear', zeros(1, n_session), 'Constant', zeros(1, n_session), 'LinearScale', linear_scale);
+
+if nargin >= 6 && ~isempty(initial_Motion)
+    feature_sets = getMotionFeatureSets(user_settings);
+    if ~any(strcmpi(feature_sets{1}, 'Waveform'))
+        error('DANT:SharedMotionFeatures', ...
+            'The first motionEstimation.features_after_shared entry (or features when omitted) must include Waveform.');
+    end
+    Motion = initial_Motion;
+    Motion.Linear = Motion.Linear(1:n_session);
+    Motion.Constant = Motion.Constant(1:n_session);
+    waveforms_corrected = computeCorrectedWaveforms(user_settings, waveforms_all, channel_locations, sessions, locations, Motion);
+    return
+end
 
 if ~isfield(user_settings.waveformCorrection, 'path_to_motion') || isempty(user_settings.waveformCorrection.path_to_motion)
     waveforms_corrected = waveforms_all;

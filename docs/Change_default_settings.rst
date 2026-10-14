@@ -273,6 +273,57 @@ Default: ``true``
 **DANT & pyDANT:**
 Determines whether to terminate the motion estimation loop early when the number of matched unit pairs fails to increase, preventing redundant iterations and overfitting.
 
+``motionEstimation.features_after_shared``
+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Default: ``[["Waveform", "AutoCorr", "PETH"]]``
+
+**DANT & pyDANT:**
+The feature sets used by each shank after successful shared motion initialization.
+This setting is only used by the multi-shank entry point. If it is omitted,
+``motionEstimation.features`` is used instead. The first effective feature set
+must include ``Waveform``. The ordinary ``features`` schedule remains unchanged
+for single-shank runs, disabled or unsuccessful shared estimation, and manual motion.
+
+.. _shared_motion_settings_label:
+
+sharedMotion
+-------------------
+
+**DANT & pyDANT:**
+Optional common motion initialization before independent shank processing.
+See :ref:`Shared motion initialization <shared_motion_label>` for the algorithm.
+
+.. code-block:: json
+
+    "sharedMotion": {
+        "enabled": true,
+        "features": [
+            ["AutoCorr", "PETH"],
+            ["Waveform", "AutoCorr", "PETH"]
+        ],
+        "linear_correction": false,
+        "repeat_last_feature_set": true,
+        "stop_early": true
+    }
+
+``enabled`` defaults to ``true`` in the supplied settings. If the block or this
+field is missing, shared estimation is disabled for compatibility with older
+settings. Only multi-shank runs with units on at least two shanks use this stage.
+
+``features``, ``repeat_last_feature_set`` and ``stop_early`` have the same meanings
+as their ``motionEstimation`` counterparts; ``linear_correction`` has the same
+meaning as ``waveformCorrection.linear_correction``. Omitted fields inherit those
+existing values and defaults. The shared stage uses ``motionEstimation.max_iter``
+as its own iteration cap. MATLAB inherits ``motionEstimation.max_distance``;
+pyDANT inherits ``clustering.max_distance``. Waveform templates, nearby channels,
+feature extraction and internal clustering settings are shared with the ordinary
+pipeline. No separate shared ``max_iter`` or ``max_distance`` is needed.
+
+A nonempty ``waveformCorrection.path_to_motion`` takes precedence: the program
+warns and skips shared estimation. The existing manual-motion requirement on
+the first ``motionEstimation.features`` entry still applies.
+
 clustering
 -------------------
 

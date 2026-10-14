@@ -152,6 +152,15 @@ Run ``mainDANT.m`` or ``mainDANT_MultiShank.m``. For a single-shank run, the out
         └── Figures/
             └── Overview.png
 
+With the supplied settings, multi-shank runs first attempt shared motion
+initialization. Set ``sharedMotion.enabled`` to ``false`` to keep independent
+processing. The original ``motionEstimation.features`` schedule remains unchanged;
+only a successful shared estimate selects ``features_after_shared`` for each shank.
+The ``SharedMotion/SharedMotion.mat`` file records the final common ``Motion``,
+``success``, ``reason``, resolved ``user_settings`` and retained ``resultIter``.
+``Output.Motion`` continues to contain each shank's final local motion.
+See :ref:`Shared motion initialization <shared_motion_label>` for details.
+
 For multi-shank runs, the root output folder contains the merged ``Output.mat``, ``Waveforms.mat``, and ``spikeInfo.mat``; each shank's ``Motion.mat``, ``resultIter.mat``, and ``SimilarityMatrix.mat`` are saved in ``Shank<ID>/``.
 
 .. _visualize_the_results_label:

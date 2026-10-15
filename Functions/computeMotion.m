@@ -2,15 +2,17 @@ function Motion = computeMotion(user_settings, similarity_matrix, hdbscan_matrix
 % COMPUTEMOTION  Estimate session‐to‐session probe drift from matched unit pairs.
 %
 % Estimates depth motion across recording sessions by fitting depth‐correction
-% parameters to reliable unit matches and computing confidence intervals.
+% parameters to reliable unit matches and optionally computing confidence intervals.
 % 1. Selects unit pairs exceeding a similarity threshold and sharing cluster membership.
 % 2. Computes raw depth differences (dy) and mean depths for each good pair.
 % 3. Fits either a linear‐correction model or default offset model via optimization.
-% 4. Uses bootstrapping to derive 95% confidence intervals for session‐wise motion.
+% 4. Optionally bootstraps 95% confidence intervals for session-wise motion (default: on).
 % 5. Generates diagnostic plots for similarity threshold and estimated drift.
 %
 % Inputs:
 %   user_settings        struct
+%       .motionEstimation.compute_ci            logical, optional (default: true)
+%           Compute and plot 95% confidence intervals; false skips bootstrapping.
 %       .waveformCorrection.linear_correction   logical
 %           Flag to use linear correction model.
 %       .save_intermediate_figures              logical
@@ -50,6 +52,10 @@ function Motion = computeMotion(user_settings, similarity_matrix, hdbscan_matrix
 % Date:    20250821  
 % Author:  Yue Huang 
 
+compute_ci = ~isfield(user_settings, 'motionEstimation') || ...
+    ~isfield(user_settings.motionEstimation, 'compute_ci') || ...
+    user_settings.motionEstimation.compute_ci;
+
 n_session = max(sessions);
 session_pairs = sessions(idx_unit_pairs);
 idx_out = sub2ind(size(similarity_matrix), idx_unit_pairs(:,1), idx_unit_pairs(:,2));
@@ -79,8 +85,7 @@ for k = 1:length(idx_good)
     dy(k) = locations(unit2, 2) - locations(unit1, 2);
 end
 
-% compute the motion and 95CI
-n_boot = 100;
+% compute the motion
 
 if length(unique(session_pairs_good)) ~= n_session
     disp('Some sessions are not included! Motion estimation failed!');
@@ -115,110 +120,113 @@ else
     max_motion = [];
 end
 
-options = optimset('MaxFunEvals', 1e8, 'MaxIter', 1e8, 'Display', 'none');
-mean_motion_boot = zeros(n_boot, n_session);
-min_motion_boot = zeros(n_boot, n_session);
-max_motion_boot = zeros(n_boot, n_session);
+if compute_ci
+    n_boot = 100;
+    options = optimset('MaxFunEvals', 1e8, 'MaxIter', 1e8, 'Display', 'none');
+    mean_motion_boot = zeros(n_boot, n_session);
+    min_motion_boot = zeros(n_boot, n_session);
+    max_motion_boot = zeros(n_boot, n_session);
 
-% start parallel pool
-if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs ~= 0
-    is_parallel = true;
-else
-    is_parallel = false;
-end
+    % start parallel pool
+    if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs ~= 0
+        is_parallel = true;
+    else
+        is_parallel = false;
+    end
 
-if is_parallel
-    pool = gcp('nocreate');
-    if isempty(pool) || contains(class(pool), 'ThreadPool')
-        if ~isempty(pool)
-            delete(pool);
-        end
-        c = parcluster('local');
-        if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs == -1
-            parpool('Processes', c.NumWorkers);
-        else
-            parpool('Processes', user_settings.n_jobs);
+    if is_parallel
+        pool = gcp('nocreate');
+        if isempty(pool) || contains(class(pool), 'ThreadPool')
+            if ~isempty(pool)
+                delete(pool);
+            end
+            c = parcluster('local');
+            if ~isfield(user_settings, 'n_jobs') || user_settings.n_jobs == -1
+                parpool('Processes', c.NumWorkers);
+            else
+                parpool('Processes', user_settings.n_jobs);
+            end
         end
     end
-end
 
-progBar = ProgressBar(n_boot, ...
-    'IsParallel', is_parallel, ...
-    'Title', 'Computing 95CI', ...
-    'UpdateRate', 1 ...
-    );
-progBar.setup([], [], []);
+    progBar = ProgressBar(n_boot, ...
+        'IsParallel', is_parallel, ...
+        'Title', 'Computing 95CI', ...
+        'UpdateRate', 1 ...
+        );
+    progBar.setup([], [], []);
 
-if is_parallel
-    parfor j = 1:n_boot
-        idx_rand = randi(length(dy), 1, length(dy));
-        dy_this = dy(idx_rand);
-        session_pairs_this = session_pairs_good(:, idx_rand);
-        depth_this = depth(idx_rand);
-    
-        if user_settings.waveformCorrection.linear_correction
-            loss_fun = @(params)lossFunLinearCorrection(params, session_pairs_this, dy_this, depth_this, linear_scale, n_session);
-            params = fminunc(loss_fun, rand(1, n_session*2-2), options);
-            p_linear = [0, params(1:n_session-1)];
-            p_constant = [0, params(n_session:end)];
-    
-            mean_motion_this = linear_scale*p_linear*mean(depth_this) + p_constant;
-            p_constant = p_constant - mean(mean_motion_this);
-        
-            mean_motion_boot(j,:) = linear_scale*p_linear*mean(depth_this) + p_constant;
-            min_motion_boot(j,:) = linear_scale*p_linear*min(depth_this) + p_constant;
-            max_motion_boot(j,:) = linear_scale*p_linear*max(depth_this) + p_constant;
-        else
-            loss_fun = @(params)lossFunLinearDefault(params, session_pairs_this, dy_this);
-            params = fminunc(loss_fun, rand(1, n_session), options);
-            mean_motion_boot(j,:) = params - mean(params);
+    if is_parallel
+        parfor j = 1:n_boot
+            idx_rand = randi(length(dy), 1, length(dy));
+            dy_this = dy(idx_rand);
+            session_pairs_this = session_pairs_good(:, idx_rand);
+            depth_this = depth(idx_rand);
+
+            if user_settings.waveformCorrection.linear_correction
+                loss_fun = @(params)lossFunLinearCorrection(params, session_pairs_this, dy_this, depth_this, linear_scale, n_session);
+                params = fminunc(loss_fun, rand(1, n_session*2-2), options);
+                p_linear = [0, params(1:n_session-1)];
+                p_constant = [0, params(n_session:end)];
+
+                mean_motion_this = linear_scale*p_linear*mean(depth_this) + p_constant;
+                p_constant = p_constant - mean(mean_motion_this);
+
+                mean_motion_boot(j,:) = linear_scale*p_linear*mean(depth_this) + p_constant;
+                min_motion_boot(j,:) = linear_scale*p_linear*min(depth_this) + p_constant;
+                max_motion_boot(j,:) = linear_scale*p_linear*max(depth_this) + p_constant;
+            else
+                loss_fun = @(params)lossFunLinearDefault(params, session_pairs_this, dy_this);
+                params = fminunc(loss_fun, rand(1, n_session), options);
+                mean_motion_boot(j,:) = params - mean(params);
+            end
+
+            updateParallel(1);
         end
-    
-        updateParallel(1);
+    else
+        for j = 1:n_boot
+            idx_rand = randi(length(dy), 1, length(dy));
+            dy_this = dy(idx_rand);
+            session_pairs_this = session_pairs_good(:, idx_rand);
+            depth_this = depth(idx_rand);
+
+            if user_settings.waveformCorrection.linear_correction
+                loss_fun = @(params)lossFunLinearCorrection(params, session_pairs_this, dy_this, depth_this, linear_scale, n_session);
+                params = fminunc(loss_fun, rand(1, n_session*2-2), options);
+                p_linear = [0, params(1:n_session-1)];
+                p_constant = [0, params(n_session:end)];
+
+                mean_motion_this = linear_scale*p_linear*mean(depth_this) + p_constant;
+                p_constant = p_constant - mean(mean_motion_this);
+
+                mean_motion_boot(j,:) = linear_scale*p_linear*mean(depth_this) + p_constant;
+                min_motion_boot(j,:) = linear_scale*p_linear*min(depth_this) + p_constant;
+                max_motion_boot(j,:) = linear_scale*p_linear*max(depth_this) + p_constant;
+            else
+                loss_fun = @(params)lossFunLinearDefault(params, session_pairs_this, dy_this);
+                params = fminunc(loss_fun, rand(1, n_session), options);
+                mean_motion_boot(j,:) = params - mean(params);
+            end
+
+            progBar([], [], []);
+        end
     end
-else
-    for j = 1:n_boot
-        idx_rand = randi(length(dy), 1, length(dy));
-        dy_this = dy(idx_rand);
-        session_pairs_this = session_pairs_good(:, idx_rand);
-        depth_this = depth(idx_rand);
-    
-        if user_settings.waveformCorrection.linear_correction
-            loss_fun = @(params)lossFunLinearCorrection(params, session_pairs_this, dy_this, depth_this, linear_scale, n_session);
-            params = fminunc(loss_fun, rand(1, n_session*2-2), options);
-            p_linear = [0, params(1:n_session-1)];
-            p_constant = [0, params(n_session:end)];
-    
-            mean_motion_this = linear_scale*p_linear*mean(depth_this) + p_constant;
-            p_constant = p_constant - mean(mean_motion_this);
-        
-            mean_motion_boot(j,:) = linear_scale*p_linear*mean(depth_this) + p_constant;
-            min_motion_boot(j,:) = linear_scale*p_linear*min(depth_this) + p_constant;
-            max_motion_boot(j,:) = linear_scale*p_linear*max(depth_this) + p_constant;
-        else
-            loss_fun = @(params)lossFunLinearDefault(params, session_pairs_this, dy_this);
-            params = fminunc(loss_fun, rand(1, n_session), options);
-            mean_motion_boot(j,:) = params - mean(params);
-        end
-    
-        progBar([], [], []);
-    end    
+    progBar.release();
+
+    mean_motion_ci95 = zeros(2, n_session);
+    min_motion_ci95 = zeros(2, n_session);
+    max_motion_ci95 = zeros(2, n_session);
+    for j = 1:n_session
+        mean_motion_ci95(1,j) = prctile(mean_motion_boot(:,j), 2.5);
+        mean_motion_ci95(2,j) = prctile(mean_motion_boot(:,j), 97.5);
+
+        min_motion_ci95(1,j) = prctile(min_motion_boot(:,j), 2.5);
+        min_motion_ci95(2,j) = prctile(min_motion_boot(:,j), 97.5);
+
+        max_motion_ci95(1,j) = prctile(max_motion_boot(:,j), 2.5);
+        max_motion_ci95(2,j) = prctile(max_motion_boot(:,j), 97.5);
+    end
 end
-progBar.release();
-
-mean_motion_ci95 = zeros(2, n_session);
-min_motion_ci95 = zeros(2, n_session);
-max_motion_ci95 = zeros(2, n_session);
-for j = 1:n_session
-    mean_motion_ci95(1,j) = prctile(mean_motion_boot(:,j), 2.5);
-    mean_motion_ci95(2,j) = prctile(mean_motion_boot(:,j), 97.5);
-
-    min_motion_ci95(1,j) = prctile(min_motion_boot(:,j), 2.5);
-    min_motion_ci95(2,j) = prctile(min_motion_boot(:,j), 97.5);
-
-    max_motion_ci95(1,j) = prctile(max_motion_boot(:,j), 2.5);
-    max_motion_ci95(2,j) = prctile(max_motion_boot(:,j), 97.5);
-end    
 
 % plot the final similarity score distribution
 similarity = similarity_matrix(idx_out);
@@ -265,13 +273,19 @@ colors = [0.7,0.7,0.7; lines(1)];
 
 % drift
 h1 = plot(ax_drift, 1:n_session, mean_motion, '-', 'Color', 'k');
-EasyPlot.plotShaded(ax_drift, 1:n_session, mean_motion_ci95, 'shadedColor', 'k');
+if compute_ci
+    EasyPlot.plotShaded(ax_drift, 1:n_session, mean_motion_ci95, 'shadedColor', 'k');
+end
 
 if user_settings.waveformCorrection.linear_correction
     h2 = plot(ax_drift, 1:n_session, min_motion, '-', 'Color', 'b');
-    EasyPlot.plotShaded(ax_drift, 1:n_session, min_motion_ci95, 'shadedColor', 'b');
+    if compute_ci
+        EasyPlot.plotShaded(ax_drift, 1:n_session, min_motion_ci95, 'shadedColor', 'b');
+    end
     h3 = plot(ax_drift, 1:n_session, max_motion, '-', 'Color', 'r');
-    EasyPlot.plotShaded(ax_drift, 1:n_session, max_motion_ci95, 'shadedColor', 'r');
+    if compute_ci
+        EasyPlot.plotShaded(ax_drift, 1:n_session, max_motion_ci95, 'shadedColor', 'r');
+    end
 
     h_legend = EasyPlot.legend(ax_drift, {'Mean motion', 'Bottom motion', 'Top motion'},...
         'location', 'northeastoutside',...

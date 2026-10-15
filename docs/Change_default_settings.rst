@@ -214,6 +214,21 @@ The standard deviation (in ms) of the Gaussian kernel used for smoothing the ISI
 motionEstimation
 -------------------
 
+.. _motion_compute_ci_label:
+
+``motionEstimation.compute_ci``
++++++++++++++++++++++++++++++++
+
+Default: ``true``
+
+**DANT & pyDANT:**
+Whether to compute bootstrap 95% confidence intervals for estimated motion.
+Set this to ``false`` to skip bootstrapping and omit confidence-interval shading
+from motion plots. The motion curves are still plotted. This setting applies
+to single-shank estimation, shared motion initialization, and subsequent
+per-shank estimation. Older settings files without this field keep the default
+behavior: confidence intervals are computed and displayed.
+
 ``motionEstimation.max_distance``
 +++++++++++++++++++++++++++++++++
 

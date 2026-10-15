@@ -51,6 +51,7 @@
 
     // parameters for motion estimation
     "motionEstimation":{
+        "compute_ci": true, // whether to compute and plot 95% motion confidence intervals; omitted defaults to true (also applies to shared motion)
         "max_distance": 100, // um. Unit pairs with distance larger than this value in Y direction will not be included for motion estimation
         "features": [
             ["AutoCorr", "PETH"],

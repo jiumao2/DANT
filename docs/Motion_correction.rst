@@ -59,6 +59,12 @@ Probe motion across recording sessions was estimated using matched unit pairs (i
 
 This minimizes the discrepancy between the relative displacements of matched units and the inferred probe motion across sessions. The optimization was performed using MATLAB's ``fminunc``, and mean-subtracted probe positions (:math:`\boldsymbol{p}^* - \text{mean}(\boldsymbol{p}^*)`) were used for waveform correction to center displacements around a common reference. 
 
+By default, DANT and pyDANT estimate 95% confidence intervals using 100 bootstrap
+resamples and display them as shaded bands in motion plots. Set
+:ref:`motionEstimation.compute_ci <motion_compute_ci_label>` to ``false`` to
+skip this computation and show only the motion curves. This also applies to
+shared motion initialization and per-shank estimation.
+
 DANT also lets you plug in user-provided motion estimates via a ``.npy`` file (see :ref:`here <path_to_motion_label>` and :ref:`Manually setting motion <manual_motion_label>` for more details). For example, you can use motion from another algorithm or manually correct a clearly wrong DANT motion estimate and apply it directly during waveform correction.
 
 .. _waveform_correction_label:

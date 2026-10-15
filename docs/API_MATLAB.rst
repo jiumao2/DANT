@@ -240,11 +240,12 @@ This function loads session-wise motion values from a user-specified ``.npy`` fi
 
 Estimate session-to-session probe drift from matched unit pairs.
 
-This function estimates depth motion across recording sessions by fitting depth-correction parameters to reliable unit matches and computing confidence intervals. It selects unit pairs exceeding a similarity threshold and sharing cluster membership, computes raw depth differences and mean depths, fits either a linear-correction model or a default offset model, uses bootstrapping to derive 95 percent confidence intervals, and generates diagnostic plots.
+This function estimates depth motion across recording sessions by fitting depth-correction parameters to reliable unit matches and optionally computing confidence intervals. It selects unit pairs exceeding a similarity threshold and sharing cluster membership, computes raw depth differences and mean depths, fits either a linear-correction model or a default offset model, by default uses bootstrapping to derive 95 percent confidence intervals, and generates diagnostic plots. Setting ``motionEstimation.compute_ci`` to ``false`` skips bootstrapping and confidence-interval shading while retaining the motion curves.
 
 **Inputs**
 
 - ``user_settings``: struct.
+- ``user_settings.motionEstimation.compute_ci``: optional logical, default ``true`` when omitted. Whether to compute and plot 95 percent confidence intervals.
 - ``user_settings.waveformCorrection.linear_correction``: logical. Whether to use the linear correction model.
 - ``user_settings.save_intermediate_figures``: logical. Whether to export diagnostic figures.
 - ``user_settings.save_intermediate_results``: logical. Whether to save intermediate results.
